@@ -1,5 +1,5 @@
 {
-  "name": "@waline/hexo-next-better",
+  "name": "hexo-next-better",
   "version": "1.0.8",
   "description": "Waline comment system for NexT.",
   "main": "index.js",
