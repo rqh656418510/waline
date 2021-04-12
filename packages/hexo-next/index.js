@@ -52,7 +52,7 @@ hexo.extend.filter.register('theme_inject', injects => {
   injects.postMeta.raw('waline_comments', `
   {% if post.comments and (is_post() or config.waline.comment_count) %}
   <span class="post-meta-item">
-    ${iconText('far fa-comment', 'waline')}
+    ${iconText('far fa-comment', 'waline', '评论数')}
     <a title="waline" href="{{ url_for(post.path) }}#waline-comments" itemprop="discussionUrl">
       <span class="post-comments-count waline-comment-count" id="{{ url_for(post.path) }}" data-xid="{{ url_for(post.path) }}" itemprop="commentCount"></span>
     </a>
@@ -66,7 +66,7 @@ hexo.extend.filter.register('theme_inject', injects => {
       hexo.theme.config.leancloud_visitors.enable = false;
       return;
     }
-    
+
     injects.postMeta.raw('waline_visitors', `
     <span id="{{ url_for(post.path) }}" class="post-meta-item leancloud_visitors" data-flag-title="{{ post.title }}" title="{{ __('post.views') }}">
       <span class="post-meta-item-icon">
@@ -79,3 +79,4 @@ hexo.extend.filter.register('theme_inject', injects => {
   }
 
 });
+
