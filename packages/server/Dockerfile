@@ -8,6 +8,7 @@ RUN set -eux; \
 
 FROM node:lts-buster-slim
 WORKDIR /app
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 ENV TZ Asia/Shanghai
 ENV NODE_ENV production
 COPY --from=build /app .
