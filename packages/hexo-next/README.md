@@ -1,4 +1,4 @@
-# Hexo NexT Waline
+# Hexo Waline NexT 
 
 ![Theme Version](https://img.shields.io/badge/NexT-v7.3.0+-blue?style=flat-square)
 ![npm](https://img.shields.io/npm/v/@waline/hexo-next?style=flat-square)
@@ -8,7 +8,7 @@ Waline comment system for NexT. Waline is a simple, safe comment system inspired
 ## Install
 
 ```bash
-npm install hexo-next-better --save
+npm install hexo-waline-next --save
 ```
 
 ## Configure
