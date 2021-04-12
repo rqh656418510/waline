@@ -8,7 +8,7 @@ Waline comment system for NexT. Waline is a simple, safe comment system inspired
 ## Install
 
 ```bash
-npm install @waline/hexo-next
+npm install hexo-next-better --save
 ```
 
 ## Configure
