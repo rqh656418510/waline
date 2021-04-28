@@ -26,13 +26,13 @@ async function formatCmt({ua, user_id, ip, ...comment}, users = [], {avatarProxy
 
   if(user_id) {
     const user = users.find(({objectId}) => user_id === objectId);
-    
+
     if(user) {
       comment.nick = user.display_name;
       comment.mail = user.email;
       comment.link = user.url;
       comment.type = user.type;
-      
+
       let {avatar} = user;
       if(avatar) {
         if(/(github)/i.test(avatar)) {
@@ -43,7 +43,7 @@ async function formatCmt({ua, user_id, ip, ...comment}, users = [], {avatarProxy
     }
   }
   comment.mail = helper.md5(comment.mail ? comment.mail.toLowerCase() : comment.mail);
-  
+
   const blockMathRegExp = /(^|[\r\n]+|<p>|<br>)\$\$([^$]+)\$\$([\r\n]+|<\/p>|<br>|$)/g;
   const match = comment.comment.match(blockMathRegExp);
   if(match) {
@@ -59,7 +59,7 @@ async function formatCmt({ua, user_id, ip, ...comment}, users = [], {avatarProxy
       comment.comment = comment.comment.replace(match[i], math);
     }
   }
-  
+
   return comment;
 }
 
@@ -120,7 +120,7 @@ module.exports = class extends BaseRest {
             where.status = ['NOT IN', ['waiting', 'spam']];
           }
         }
-        
+
         if(keyword) {
           where.comment = ['LIKE', `%${keyword}%`];
         }
@@ -151,7 +151,7 @@ module.exports = class extends BaseRest {
           url,
           status: ['NOT IN', ['waiting', 'spam']]
         }, {
-          desc: 'insertedAt',
+          asc: 'insertedAt',
           field: [
             'comment', 'insertedAt', 'link', 'mail', 'nick', 'pid', 'rid', 'ua', 'user_id'
           ]
@@ -169,7 +169,7 @@ module.exports = class extends BaseRest {
         const rootCount = comments.filter(({rid}) => !rid).length;
         const pageOffset = Math.max((page - 1) * pageSize, 0);
         const rootComments = comments.filter(({rid}) => !rid).slice(pageOffset, pageOffset + pageSize);
-        
+
         return this.json({
           page,
           totalPages: Math.ceil(rootCount / pageSize),
@@ -193,7 +193,7 @@ module.exports = class extends BaseRest {
     think.logger.debug('Post Comment Start!');
     const {comment, link, mail, nick, pid, rid, ua, url, at} = this.post();
     const data = {
-      link, mail, nick, pid, rid, ua, url, 
+      link, mail, nick, pid, rid, ua, url,
       ip: this.ctx.ip,
       insertedAt: new Date(),
       comment: marked(comment),
@@ -248,7 +248,7 @@ module.exports = class extends BaseRest {
       }
     }
     think.logger.debug(`Comment akismet check result: ${data.status}`);
-    
+
     if(data.status !== 'spam') {
       /** KeyWord Filter */
       const {forbiddenWords} = this.config();
@@ -260,7 +260,7 @@ module.exports = class extends BaseRest {
       }
     }
     think.logger.debug(`Comment keyword check result: ${data.status}`);
-    
+
     const preSaveResp = await this.hook('preSave', data);
     if(preSaveResp) {
       return this.fail(preSaveResp.errmsg);
@@ -269,7 +269,7 @@ module.exports = class extends BaseRest {
 
     const resp = await this.modelInstance.add(data);
     think.logger.debug(`Comment have been added to storage.`);
-    
+
     let pComment;
     if(pid) {
       pComment = await this.modelInstance.select({objectId: pid});
@@ -312,7 +312,7 @@ module.exports = class extends BaseRest {
     if(preDeleteResp) {
       return this.fail(preDeleteResp);
     }
-    
+
     await this.modelInstance.delete({objectId: this.id});
     await this.hook('postDelete', this.id);
     return this.success();
