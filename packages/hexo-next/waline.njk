@@ -1,10 +1,13 @@
 <script>
-NexT.utils.getScript("{%if config.waline.libUrl %}{{config.waline.libUrl}}{%else%}https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js{%endif%}").then(() => {
-  new Waline(Object.assign({
-    lang: '{%if page.lang%}{{page.lang}}{%else%}zh-CN{%endif%}'
-  }, {{ config.waline | safedump }}, {
-    el: '#waline-comments',
-    path: {{ url_for(page.path) | replace(r/index\.html$/, '') | safedump }},
-  }));
-  }, window.Waline);
+document.addEventListener('page:loaded', () => {
+  NexT.utils.getScript("{%if config.waline.libUrl %}{{config.waline.libUrl}}{%else%}https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js{%endif%}")
+    .then(() => {
+      new Waline(Object.assign({
+        lang: '{%if page.lang%}{{page.lang}}{%else%}zh-CN{%endif%}'
+      }, {{ config.waline | safedump }}, {
+        el: '#waline-comments',
+        path: {{ url_for(page.path) | replace(r/index\.html$/, '') | safedump }},
+      }));
+    }, window.Waline);
+});
 </script>
