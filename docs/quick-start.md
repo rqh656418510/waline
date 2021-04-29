@@ -2,7 +2,7 @@
 
 如果你想在某个网页或者文章页中使用 Waline，请参照以下步骤配置
 
-## 获取APP ID 和 APP Key
+## 获取 APP ID 和 APP Key
 
 请先[登录](https://console.leancloud.app/login.html#/signin)或[注册](https://console.leancloud.app/login.html#/signup) `LeanCloud 国际版`, 进入[控制台](https://console.leancloud.app/applist.html#/apps)后点击左下角[创建应用](https://console.leancloud.app/applist.html#/newapp)：
 
@@ -14,19 +14,19 @@
 
 > **注：**  
 > 这里推荐使用 Leancloud 国际版。如果你确实想用 Leancloud 国内版的话（国际版是 [leancloud.app](https://leancloud.app)，非国际版是 [leancloud.cn](https://leancloud.cn)），除了 `APP_ID`, `APP_Key` 和 `Master Key` 之外，还需要对应用进行域名绑定。  
-> 进入应用后选择 <kbd>设置</kbd> > <kbd>域名绑定</kbd>  > API 访问域名 <kbd>绑定新域名</kbd> > 输入需要绑定的已备案域名点击 <kbd>确定</kbd>。之后按照页面上的提示去 DNS 上做正确的 CNAME 解析即可。
-> 
+> 进入应用后选择 <kbd>设置</kbd> > <kbd>域名绑定</kbd> > API 访问域名 <kbd>绑定新域名</kbd> > 输入需要绑定的已备案域名点击 <kbd>确定</kbd>。之后按照页面上的提示去 DNS 上做正确的 CNAME 解析即可。
+>
 > ![](https://i.loli.net/2020/11/09/xfsX4JKt9zhuaiB.png)
 
 ## Vercel 部署
 
 [ ![](https://vercel.com/button) ](https://vercel.com/import/project?template=https://github.com/lizheming/waline/tree/master/example)
 
-点击上方按钮，跳转至 Vercel 进行快速部署。未登录的话需要登录，这里选 Github 登录即可。登录后会让你输入 Vercel 项目名称。
+点击上方按钮，跳转至 Vercel 进行快速部署。未登录的话需要登录，这里选 GitHub 登录即可。登录后会让你输入 Vercel 项目名称。
 
 ![](https://p2.ssl.qhimg.com/t018cd2a91a8896a555.png)
 
-输入名称后点击 <kbd>Continue</kbd> 进入下一步，输入 Github 仓库名称。Vercel 会基于 waline 模板帮助你新建并初始化该仓库。
+输入名称后点击 <kbd>Continue</kbd> 进入下一步，输入 GitHub 仓库名称。Vercel 会基于 waline 模板帮助你新建并初始化该仓库。
 
 ![](https://p4.ssl.qhimg.com/t01bb30e74f85ddf5b3.png)
 
@@ -45,7 +45,7 @@
 ```html
 <head>
   ..
-  <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+  <script src="//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js"></script>
   ...
 </head>
 <body>
@@ -55,12 +55,11 @@
     new Waline({
       el: '#waline',
       path: location.pathname,
-      serverURL: 'https://your-domain.vercel.app'
+      serverURL: 'https://your-domain.vercel.app',
     });
   </script>
 </body>
 ```
-
 
 ## 配置
 
@@ -69,10 +68,9 @@
 ```js
 new Waline({
   el: '#waline',
-  path: location.pathname
+  path: location.pathname,
 });
 ```
-
 
 ## NPM
 
@@ -90,9 +88,9 @@ import Waline from '@waline/client';
 const Waline = require('@waline/client');
 
 new Waline({
-  el:'#waline',
+  el: '#waline',
   // other config
-})
+});
 ```
 
 ## 评论数据管理

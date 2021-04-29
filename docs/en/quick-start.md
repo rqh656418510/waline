@@ -16,7 +16,7 @@ After app created, we need click into it. Select <kbd>Settings</kbd> > <kbd>App 
 
 [ ![](https://vercel.com/button) ](https://vercel.com/import/project?template=https://github.com/lizheming/waline/tree/master/example)
 
-Click the blue button, and it will redirect to vercel to deploy with waline template. You need login if you have not, we recommends you sign in with Github. You can input your Vercel project name after you login.
+Click the blue button, and it will redirect to vercel to deploy with waline template. You need login if you have not, we recommends you sign in with GitHub. You can input your Vercel project name after you login.
 
 ![](https://p2.ssl.qhimg.com/t018cd2a91a8896a555.png)
 
@@ -39,7 +39,7 @@ Let us set the `serverURL` value to the site url previous step got in the config
 ```html
 <head>
   ..
-  <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+  <script src="//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js"></script>
   ...
 </head>
 <body>
@@ -49,12 +49,11 @@ Let us set the `serverURL` value to the site url previous step got in the config
     new Waline({
       el: '#waline',
       path: location.pathname,
-      serverURL: 'https://your-domain.vercel.app'
+      serverURL: 'https://your-domain.vercel.app',
     });
   </script>
 </body>
 ```
-
 
 ## NPM
 
@@ -72,11 +71,11 @@ import Waline from '@waline/client';
 const Waline = require('@waline/client');
 
 new Waline({
-  el:'#waline',
+  el: '#waline',
   // other config
-})
+});
 ```
 
 ## Comment Managment
 
-Waline has a simple admin control panel, we can mange comment data in it. We can register in your site url  `<serverURL>/ui/register` after we deployed successfully. The first register one is administrator. You can see comment management UI after login. Collection it for the next use!
+Waline has a simple admin control panel, we can mange comment data in it. We can register in your site url `<serverURL>/ui/register` after we deployed successfully. The first register one is administrator. You can see comment management UI after login. Collection it for the next use!
