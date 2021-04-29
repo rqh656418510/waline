@@ -1,4 +1,4 @@
-# Hexo Waline NexT 
+# Hexo Waline NexT
 
 ![Theme Version](https://img.shields.io/badge/NexT-v7.3.0+-blue?style=flat-square)
 ![npm](https://img.shields.io/npm/v/@waline/hexo-next?style=flat-square)
@@ -32,3 +32,8 @@ waline:
   requiredFields: [] # Set required fields: [nick] | [nick, mail]
   libUrl: # Set custom library cdn url
 ```
+
+## Compatibility
+
+- hexo-waline-next 1.0.8 support <= NexT 8.3
+- hexo-waline-next 2.0.0 support > NexT 8.3

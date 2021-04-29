@@ -1,6 +1,6 @@
 {
   "name": "hexo-waline-next",
-  "version": "1.0.8",
+  "version": "2.0.0",
   "description": "Waline comment system for NexT.",
   "main": "index.js",
   "repository": "rqh656418510/waline",
@@ -14,7 +14,7 @@
   "bugs": {
     "url": "https://github.com/rqh656418510/waline/issues"
   },
-  "homepage": "https://github.com/rqh656418510/waline/packages/#readme",
+  "homepage": "https://github.com/rqh656418510/waline/tree/master/packages/hexo-next",
   "dependencies": {
     "@next-theme/utils": "^1.1.0"
   }
