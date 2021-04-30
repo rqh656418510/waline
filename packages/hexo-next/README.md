@@ -35,5 +35,5 @@ waline:
 
 ## Compatibility
 
-- hexo-waline-next 1.0.8 support <= NexT 8.3
-- hexo-waline-next 2.0.0+ support > NexT 8.3
+- hexo-waline-next 1.0.8 only support <= NexT 8.3
+- hexo-waline-next 2.0.0+ only support >= NexT 8.4
