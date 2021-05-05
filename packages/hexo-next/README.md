@@ -31,9 +31,12 @@ waline:
   comment_count: true # If false, comment count will only be displayed in post page, not in home page
   requiredFields: [] # Set required fields: [nick] | [nick, mail]
   libUrl: # Set custom library cdn url
+  avatarCDN: # Set custom gravatar cdn url
 ```
 
 ## Compatibility
 
-- hexo-waline-next 1.0.8 only support <= NexT 8.3
-- hexo-waline-next 2.0.0+ only support >= NexT 8.4
+| Plugin version | NexT version |
+| -------------- | ------------ |
+| 1.0.8          | <= 8.3       |
+| 2.0.0+         | >= 8.4       |

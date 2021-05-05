@@ -3,7 +3,8 @@
 }, config.waline, {
   el: '#waline-comments',
   libUrl: config.waline.libUrl | default('https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js', true),
-  path: url_for(page.path) | replace(r/index\.html$/, '')
+  path: url_for(page.path) | replace(r/index\.html$/, ''),
+  avatarCDN: config.waline.avatarCDN | default('https://cdn.v2ex.com/gravatar/', true)
 }) }}
 <script>
 document.addEventListener('page:loaded', () => {

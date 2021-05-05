@@ -1,3 +1,19 @@
+# (2021-05-05)
+
+### Version
+
+- 2.0.6
+
+### Features
+
+- add custom configuration for gravatar cdn url
+
+``` yml
+waline:
+  enable: true
+  avatarCDN: https://cdn.v2ex.com/gravatar/
+```
+
 # (2021-04-30)
 
 ### Version
