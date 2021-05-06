@@ -1,3 +1,5 @@
+import MigrationTool from './components/MigrationTool.vue';
+
 function waline() {
   const Waline = require('@waline/client');
   new Waline({
@@ -14,7 +16,7 @@ function waline() {
   });
 }
 
-function renderTips() {
+function renderTips(isHome = false) {
   let tips = document.getElementById('waline-tips');
   if (tips) {
     return false;
@@ -22,7 +24,9 @@ function renderTips() {
 
   tips = document.createElement('div');
   tips.id = 'waline-tips';
-  tips.className = 'page-nav';
+  if (!isHome) {
+    tips.className = 'page-nav';
+  }
   const styles = {
     padding: '10px',
     boxSizing: 'border-box',
@@ -48,8 +52,8 @@ function renderWaline(router) {
     if (!globalThis.window) {
       return;
     }
-    let $page = document.querySelector('.page');
-    let tips = renderTips();
+    let $page = document.querySelector('.page,.home .theme-default-content');
+    let tips = renderTips($page.classList.contains('theme-default-content'));
     if (tips) {
       $page.appendChild(tips);
     }
@@ -61,14 +65,16 @@ function renderWaline(router) {
 
     container = document.createElement('div');
     container.id = 'waline-comment';
-    container.className = 'page-nav';
+    if (!$page.classList.contains('theme-default-content')) {
+      container.className = 'page-nav';
+    }
     $page.appendChild(container);
 
     waline();
   }, 1000);
 
   router.afterEach((_) => {
-    let $page = document.querySelector('.page');
+    let $page = document.querySelector('.page,.home .theme-default-content');
     let tips = renderTips();
 
     let container = document.getElementById('waline-comment');
@@ -78,7 +84,9 @@ function renderWaline(router) {
 
     container = document.createElement('div');
     container.id = 'waline-comment';
-    container.className = 'page-nav';
+    if (!$page.classList.contains('theme-default-content')) {
+      container.className = 'page-nav';
+    }
 
     if ($page) {
       if (tips) {
@@ -88,7 +96,7 @@ function renderWaline(router) {
       waline();
     } else {
       setTimeout(() => {
-        $page = document.querySelector('.page');
+        $page = document.querySelector('.page,.home .theme-default-content');
         $page.appendChild(container);
         waline();
       }, 1000);
@@ -96,9 +104,11 @@ function renderWaline(router) {
   });
 }
 
-export default ({ router }) => {
+export default ({ app, router }) => {
+  app.component('MigrationTool', MigrationTool);
+
   try {
-    document && renderWaline(router);
+    if (!__SSR__) renderWaline(router);
   } catch (e) {
     console.error(e.message);
   }

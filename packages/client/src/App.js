@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useReducer } from 'react';
 import CommentBox from './components/CommentBox';
 import CommentCard from './components/CommentCard';
 import { ConfigContext } from './context';
-import { fetchCount, fetchList } from './utils/fetch';
+import { fetchList } from './utils';
 
 function App({ boxConfig, listConfig, copyRight }) {
   const ctx = useContext(ConfigContext);
@@ -23,7 +23,7 @@ function App({ boxConfig, listConfig, copyRight }) {
           count: resp.count,
         })
       )
-      .catch((_) => dispatch({ loading: false }));
+      .catch(() => dispatch({ loading: false }));
   }, []);
 
   const onLoadMore = useCallback(() => {
@@ -39,7 +39,7 @@ function App({ boxConfig, listConfig, copyRight }) {
           data: data.concat(resp.data),
         })
       )
-      .catch((_) => dispatch({ loading: false }));
+      .catch(() => dispatch({ loading: false }));
   }, [page, data]);
 
   const onSubmit = useCallback(
@@ -94,16 +94,20 @@ function App({ boxConfig, listConfig, copyRight }) {
         <div className="vempty">{ctx.locale.sofa}</div>
       ) : null}
       {page < totalPages && !loading ? (
-        <div className="vpage txt-center">
+        <div className="vpage text-center">
           <button type="button" className="vmore vbtn" onClick={onLoadMore}>
             {ctx.locale.more}
           </button>
         </div>
       ) : null}
       {copyRight ? (
-        <div className="vpower txt-right">
+        <div className="vpower text-right">
           Powered by{' '}
-          <a href="https://github.com/lizheming/Waline" target="_blank">
+          <a
+            href="https://github.com/lizheming/Waline"
+            target="_blank"
+            rel="noreferrer"
+          >
             Waline
           </a>{' '}
           v{VERSION}

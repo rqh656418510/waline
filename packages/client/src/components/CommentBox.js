@@ -1,19 +1,20 @@
 import React, {
   useCallback,
   useContext,
-  useEffect,
   useReducer,
   useRef,
   useState,
 } from 'react';
-import cls from 'classnames';
-import marked from 'marked';
-import hanabi from 'hanabi';
 import autosize from 'autosize';
+import cls from 'classnames';
 import { ConfigContext } from '../context';
 import { CancelReplyIcon, EmojiIcon, MarkdownIcon, PreviewIcon } from './Icons';
-import { postComment } from '../utils/fetch';
-import { getWordNumber } from '../utils/wordCount';
+import {
+  getMarkdownParser,
+  getWordNumber,
+  parseEmoji,
+  postComment,
+} from '../utils';
 
 const CACHE_KEY = 'ValineCache';
 const META = ['nick', 'mail', 'link'];
@@ -35,20 +36,6 @@ const store = {
     localStorage.setItem(CACHE_KEY, JSON.stringify(comment));
   },
 };
-
-function escapeHTML(text) {
-  const arr = [
-    ['<', '&lt;'],
-    ['>', '&gt;'],
-    ['"', '&quot;'],
-    ["'", '&#39;'],
-  ];
-  arr.forEach(
-    ([target, replaced]) =>
-      (text = text.replace(new RegExp(target, 'g'), replaced))
-  );
-  return text;
-}
 
 function _insertAtCaret(field, val) {
   if (document.selection) {
@@ -105,7 +92,7 @@ function onPasteFactory(
         const uploadText = `![Uploading ${file['name']}]()`;
         insertAtCaret(field, uploadText);
         return Promise.resolve()
-          .then((_) => uploadImage(file))
+          .then(() => uploadImage(file))
           .then((ret) => {
             field.value = field.value.replace(
               uploadText,
@@ -116,23 +103,6 @@ function onPasteFactory(
       });
     }
   };
-}
-
-function parseEmoji(text, emojiMaps, emojiCDN) {
-  if (!text) {
-    return text;
-  }
-  return text.replace(/:(.+?):/g, (placeholder, key) => {
-    if (!emojiMaps[key]) {
-      return placeholder;
-    }
-
-    return `![${key}](${
-      /(?:https?:)?\/\//.test(emojiMaps[key])
-        ? emojiMaps[key]
-        : emojiCDN + emojiMaps[key]
-    })`;
-  });
 }
 
 export default function ({
@@ -169,17 +139,23 @@ export default function ({
     }
   );
   const [submitting, setSubmitting] = useState(false);
-
   const ctx = useContext(ConfigContext);
+
+  const metaFields = meta.filter((kind) => META.indexOf(kind) > -1);
+
+  const parser = getMarkdownParser(highlight, ctx);
+
   const onChange = useCallback((e) => {
     const comment = e.target.value;
     dispatch({ comment });
-    const preview = marked(
-      parseEmoji(escapeHTML(comment), ctx.emojiMaps, ctx.emojiCDN)
-    );
+    const preview = parser(comment);
+
     setPreviewText(preview);
-    comment ? autosize(e.target) : autosize.destroy(e.target);
+
+    if (comment) autosize(e.target);
+    else autosize.destroy(e.target);
   }, []);
+
   const insertAtCaret = (field, val) => {
     _insertAtCaret(field, val);
     onChange({ target: field });
@@ -197,6 +173,7 @@ export default function ({
       insertAtCaret(e.target, '    ');
     }
   }, []);
+
   const onPaste = useCallback(
     onPasteFactory(editorRef, ctx.uploadImage, insertAtCaret, onChange),
     []
@@ -271,7 +248,7 @@ export default function ({
           onCancelReply();
         }
       },
-      (_) => setSubmitting(false)
+      () => setSubmitting(false)
     );
   }, [comment]);
 
@@ -301,11 +278,13 @@ export default function ({
       }
     });
   }, []);
-  const onLogout = useCallback((e) => {
+
+  const onLogout = useCallback(() => {
     ctx.setUserInfo({});
     localStorage.setItem('WALINE_USER', '');
     sessionStorage.setItem('WALINE_USER', '');
   }, []);
+
   const onProfile = useCallback((e) => {
     e.preventDefault();
 
@@ -333,21 +312,6 @@ export default function ({
         );
     });
   });
-
-  useEffect(() => {
-    marked.setOptions({
-      renderer: new marked.Renderer(),
-      highlight: highlight === false ? null : hanabi,
-      gfm: true,
-      tables: true,
-      breaks: true,
-      pedantic: false,
-      sanitize: true,
-      smartLists: true,
-      smartypants: true,
-    });
-  }, []);
-  const metaFields = meta.filter((kind) => META.indexOf(kind) > -1);
 
   return (
     <div className="vpanel">
@@ -386,14 +350,13 @@ export default function ({
                     onClick={onLogout}
                   >
                     <svg
-                      class="vicon"
+                      className="vicon"
                       viewBox="0 0 1024 1024"
-                      version="1.1"
                       xmlns="http://www.w3.org/2000/svg"
                       width="14"
                       height="14"
                     >
-                      <path d="M568.569 512l170.267-170.267c15.556-15.556 15.556-41.012 0-56.569s-41.012-15.556-56.569 0L512 455.431 341.733 285.165c-15.556-15.556-41.012-15.556-56.569 0s-15.556 41.012 0 56.569L455.431 512 285.165 682.267c-15.556 15.556-15.556 41.012 0 56.569 15.556 15.556 41.012 15.556 56.569 0L512 568.569l170.267 170.267c15.556 15.556 41.012 15.556 56.569 0 15.556-15.556 15.556-41.012 0-56.569L568.569 512z"></path>
+                      <path d="m568.569 512 170.267-170.267c15.556-15.556 15.556-41.012 0-56.569s-41.012-15.556-56.569 0L512 455.431 341.733 285.165c-15.556-15.556-41.012-15.556-56.569 0s-15.556 41.012 0 56.569L455.431 512 285.165 682.267c-15.556 15.556-15.556 41.012 0 56.569 15.556 15.556 41.012 15.556 56.569 0L512 568.569l170.267 170.267c15.556 15.556 41.012 15.556 56.569 0 15.556-15.556 15.556-41.012 0-56.569L568.569 512z" />
                     </svg>
                   </div>
                 </div>
@@ -437,7 +400,7 @@ export default function ({
                 <span
                   title={ctx.locale.emoji}
                   className={cls('vicon vemoji-btn', { actived: showEmoji })}
-                  onClick={(_) =>
+                  onClick={() =>
                     toggleEmoji(!showEmoji) ||
                     (!showEmoji && togglePreview(false))
                   }
@@ -449,7 +412,7 @@ export default function ({
                   className={cls('vicon vpreview-btn', {
                     actived: showPreview,
                   })}
-                  onClick={(_) =>
+                  onClick={() =>
                     togglePreview(!showPreview) ||
                     (!showPreview && toggleEmoji(false))
                   }
@@ -466,6 +429,7 @@ export default function ({
                 href="https://guides.github.com/features/mastering-markdown/"
                 className="vicon"
                 target="_blank"
+                rel="noreferrer"
               >
                 <MarkdownIcon />
               </a>
@@ -488,7 +452,7 @@ export default function ({
                 <i
                   title={key}
                   key={key}
-                  onClick={(_) => insertAtCaret(editorRef.current, `:${key}:`)}
+                  onClick={() => insertAtCaret(editorRef.current, `:${key}:`)}
                 >
                   <img
                     alt={key}

@@ -1,16 +1,15 @@
 module.exports = [
   {
-    text: '开始',
-    link: '/quick-start',
+    text: '指南',
+    link: '/get-started.html',
   },
   {
     text: '配置',
-    ariaLabel: '配置',
-    items: [
+    children: [
       {
         text: '前端',
         ariaLabel: '前端',
-        items: [
+        children: [
           {
             text: '基础配置',
             link: '/client/basic.html',
@@ -27,8 +26,7 @@ module.exports = [
       },
       {
         text: '服务端',
-        ariaLabel: '服务端',
-        items: [
+        children: [
           {
             text: '基础配置',
             link: '/server/basic.html',
@@ -51,33 +49,31 @@ module.exports = [
   },
   {
     text: '迁移',
-    ariaLabel: '迁移',
-    items: [
+    children: [
       {
-        text: 'Valine 迁移指南',
-        link: '/migration',
+        text: '从 Valine 迁移',
+        link: '/migration.html',
       },
       {
         text: '迁移助手',
-        link: '/migration/tool',
+        link: '/migration/tool.html',
       },
     ],
   },
   {
     text: '了解更多',
-    ariaLabel: '了解更多',
-    items: [
+    children: [
       {
         text: 'API',
-        link: '/api',
+        link: '/api.html',
       },
       {
         text: '开发指南',
-        link: '/development',
+        link: '/development.html',
       },
       {
         text: 'FAQ',
-        link: '/faq',
+        link: '/faq.html',
       },
     ],
   },
