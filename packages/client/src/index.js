@@ -2,12 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import Context from './context';
-import Visitor from './utils/visitor';
-import { fetchCount, fetchRecent } from './utils/fetch';
-import mathML from './utils/mathml';
-import './index.css';
-import './recent.css';
-import './math.css';
+import { Visitor, fetchCount, fetchRecent, registMathML } from './utils';
+
+import './styles/index.scss';
 
 export function ReactComponent({
   placeholder = 'Just Go Go.',
@@ -97,7 +94,7 @@ export default function Waline({
     } else {
       const hasPath = restIds.length !== ids.length;
       (hasPath ? addPromise : Promise.resolve())
-        .then((_) => Visitor.get({ serverURL, path: ids }))
+        .then(() => Visitor.get({ serverURL, path: ids }))
         .then((counts) => Visitor.render(counts, countEls));
     }
   }
@@ -134,10 +131,10 @@ export default function Waline({
     });
   }
 
-  //mathml
-  window.addEventListener('load', mathML);
+  // mathml
+  window.addEventListener('load', registMathML);
 
-  //comment list display
+  // comment list display
   const root = document.querySelector(el);
   if (!root) {
     return;

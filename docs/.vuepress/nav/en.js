@@ -1,18 +1,17 @@
 module.exports = [
   {
     text: 'Guide',
-    link: '/en/quick-start',
+    link: '/en/get-started.html',
   },
   {
-    text: 'Config Reference',
-    ariaLabel: 'Config Reference',
-    items: [
+    text: 'Config',
+    children: [
       {
         text: 'Client',
         ariaLabel: 'Client',
-        items: [
+        children: [
           {
-            text: 'Basic Configure',
+            text: 'Basic Config',
             link: '/en/client/basic.html',
           },
           {
@@ -27,10 +26,9 @@ module.exports = [
       },
       {
         text: 'Server',
-        ariaLabel: 'Server',
-        items: [
+        children: [
           {
-            text: 'Basic Configure',
+            text: 'Basic Config',
             link: '/en/server/basic.html',
           },
           {
@@ -38,7 +36,7 @@ module.exports = [
             link: '/en/server/notification.html',
           },
           {
-            text: 'Othere Databases',
+            text: 'Using Databases',
             link: '/en/server/databases.html',
           },
           {
@@ -51,32 +49,31 @@ module.exports = [
   },
   {
     text: 'Migration',
-    items: [
+    children: [
       {
-        text: 'Valine Migration Guide',
-        link: '/en/migration',
+        text: 'Migrate from Valine',
+        link: '/en/migration.html',
       },
       {
-        text: 'Data Migration Helper',
-        link: '/migration/tool',
+        text: 'Migration Helper',
+        link: '/en/migration/tool.html',
       },
     ],
   },
   {
     text: 'Learn More',
-    ariaLabel: 'Learn More',
-    items: [
+    children: [
       {
         text: 'API',
-        link: '/en/api',
+        link: '/en/api.html',
       },
       {
         text: 'Contributing Guide',
-        link: '/en/development',
+        link: '/en/development.html',
       },
       {
         text: 'FAQ',
-        link: '/en/faq',
+        link: '/en/faq.html',
       },
     ],
   },

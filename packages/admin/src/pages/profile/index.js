@@ -78,6 +78,7 @@ export default function () {
                   href="http://gravatar.com/emails/"
                   title={t('go to gravatar to change avatar')}
                   target="_blank"
+                  rel="noreferrer"
                 >
                   <img
                     className="profile-avatar"
@@ -129,7 +130,7 @@ export default function () {
                       />
                       <p className="description">
                         <Trans i18nKey="homepage tips">
-                          Current users' homepage. It must be start with{' '}
+                          Current users&apos; homepage. It must be start with{' '}
                           <code>http://</code> or <code>https://</code>.
                         </Trans>
                       </p>
@@ -165,22 +166,22 @@ export default function () {
                           : `${baseUrl}oauth/github?state=${token}`
                       }
                       target={user.github ? '_blank' : '_self'}
+                      rel="noreferrer"
                     >
                       <GithubIcon />
                     </a>
                     <div
                       className="account-unbind"
-                      onClick={(_) => unbind('github')}
+                      onClick={() => unbind('github')}
                     >
                       <svg
                         className="vicon"
                         viewBox="0 0 1024 1024"
-                        version="1.1"
                         xmlns="http://www.w3.org/2000/svg"
                         width="14"
                         height="14"
                       >
-                        <path d="M568.569 512l170.267-170.267c15.556-15.556 15.556-41.012 0-56.569s-41.012-15.556-56.569 0L512 455.431 341.733 285.165c-15.556-15.556-41.012-15.556-56.569 0s-15.556 41.012 0 56.569L455.431 512 285.165 682.267c-15.556 15.556-15.556 41.012 0 56.569 15.556 15.556 41.012 15.556 56.569 0L512 568.569l170.267 170.267c15.556 15.556 41.012 15.556 56.569 0 15.556-15.556 15.556-41.012 0-56.569L568.569 512z"></path>
+                        <path d="m568.569 512 170.267-170.267c15.556-15.556 15.556-41.012 0-56.569s-41.012-15.556-56.569 0L512 455.431 341.733 285.165c-15.556-15.556-41.012-15.556-56.569 0s-15.556 41.012 0 56.569L455.431 512 285.165 682.267c-15.556 15.556-15.556 41.012 0 56.569 15.556 15.556 41.012 15.556 56.569 0L512 568.569l170.267 170.267c15.556 15.556 41.012 15.556 56.569 0 15.556-15.556 15.556-41.012 0-56.569L568.569 512z" />
                       </svg>
                     </div>
                   </div>

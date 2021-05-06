@@ -1,24 +1,19 @@
 const helper = require('think-helper');
 const marked = require('marked');
-const katext = require('katex');
+const katex = require('katex');
 const parser = require('ua-parser-js');
 const BaseRest = require('./rest');
 const akismet = require('../service/akismet');
 
 marked.setOptions({
-  renderer: new marked.Renderer(),
   highlight: false,
-  gfm: true,
-  tables: true,
   breaks: true,
-  pedantic: false,
-  sanitize: true,
   smartLists: true,
   smartypants: true,
 });
 
 async function formatCmt(
-  { ua, user_id, ip, ...comment },
+  { ua, user_id, ...comment },
   users = [],
   { avatarProxy }
 ) {
@@ -61,7 +56,7 @@ async function formatCmt(
         .replace(/\$\$([\r\n]+|<\/p>|<br>|$)/, '')
         .replace(/<br>/g, '\r\n');
 
-      const math = katext.renderToString(text, {
+      const math = katex.renderToString(text, {
         output: 'mathml',
       });
       comment.comment = comment.comment.replace(match[i], math);
@@ -387,11 +382,11 @@ module.exports = class extends BaseRest {
       data.status === 'approved' &&
       oldData.pid
     ) {
-      let pComment = await this.modelInstance.select({ objectId: pid });
+      let pComment = await this.modelInstance.select({ objectId: oldData.pid });
       pComment = pComment[0];
 
       const notify = this.service('notify');
-      await notify.run(resp, pComment, true);
+      await notify.run(oldData, pComment, true);
     }
     await this.hook('postUpdate', data);
     return this.success();

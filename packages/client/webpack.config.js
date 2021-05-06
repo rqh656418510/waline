@@ -1,12 +1,10 @@
 const path = require('path');
 const webpack = require('webpack');
-const es3ifyPlugin = require('es3ify-webpack-plugin');
 const htmlWebpackPlugin = require('html-webpack-plugin');
 const { version } = require('./package.json');
 
 const pkgName = 'Waline';
 module.exports = {
-  mode: 'production',
   entry: {
     [pkgName + '.min']: path.resolve(__dirname, 'src/index.js'),
   },
@@ -33,14 +31,17 @@ module.exports = {
         use: 'babel-loader?cacheDirectory',
       },
       {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader'],
+        test: /\.scss$/,
+        use: [
+          { loader: 'style-loader' },
+          { loader: 'css-loader' },
+          { loader: 'sass-loader' },
+        ],
       },
     ],
   },
   plugins: [
     new webpack.DefinePlugin({ VERSION: JSON.stringify(version) }),
-    new es3ifyPlugin(),
     new htmlWebpackPlugin({
       inject: false,
       templateContent: ({ htmlWebpackPlugin }) => `

@@ -1,92 +1,163 @@
+const chokidar = require('chokidar');
+const taskLists = require('markdown-it-task-lists');
+const { logger, path } = require('@vuepress/utils');
+const getSidebar = require('./sidebar');
+
 module.exports = {
   title: 'Waline',
-  description: 'Simple Comment System inspired by Valine.',
+  description: 'A Simple Comment System inspired by Valine.',
+
+  head: [
+    [
+      'link',
+      {
+        rel: 'icon',
+        type: 'image/png',
+        sizes: '16x16',
+        href: `/assets/icon/favicon-16x16.png`,
+      },
+    ],
+    [
+      'link',
+      {
+        rel: 'icon',
+        type: 'image/png',
+        sizes: '32x32',
+        href: `/assets/icon/favicon-32x32.png`,
+      },
+    ],
+    ['link', { rel: 'manifest', href: '/manifest.webmanifest' }],
+    ['meta', { name: 'application-name', content: 'Waline' }],
+    ['meta', { name: 'apple-mobile-web-app-title', content: 'Waline' }],
+    [
+      'meta',
+      { name: 'apple-mobile-web-app-status-bar-style', content: 'white' },
+    ],
+    [
+      'link',
+      { rel: 'apple-touch-icon', href: `/assets/icon/apple-touch-icon.png` },
+    ],
+    ['meta', { name: 'msapplication-TileColor', content: '#0066AE' }],
+    ['meta', { name: 'theme-color', content: '#0066AE' }],
+  ],
+
   locales: {
     '/': {
       lang: 'zh-CN',
       title: 'Waline',
-      description: 'Simple Comment System inspired by Valine.',
+      description: '一款基于 Valine 衍生的简洁、安全的评论系统。',
     },
     '/en/': {
       lang: 'en-US',
       title: 'Waline',
-      description: '一款基于 Valine 衍生的简洁、安全的评论系统。',
+      description: 'A Simple Comment System inspired by Valine.',
     },
   },
+
   themeConfig: {
-    editLinks: true,
-    repo: 'https://github.com/lizheming/waline',
-    logo: 'https://p5.ssl.qhimg.com/t01ec54674f5912eea9.png',
+    logo: '/logo.png',
+    repo: 'lizheming/waline',
     docsDir: 'docs',
+    docsBranch: 'master',
     locales: {
+      '/': {
+        navbar: require('./nav/zh'),
+        sidebar: getSidebar('', [
+          '快速上手',
+          '基础配置',
+          '高级功能',
+          '更多玩法',
+        ]),
+        selectLanguageName: '简体中文',
+        selectLanguageText: '选择语言',
+        selectLanguageAriaLabel: '选择语言',
+        contributorsText: '贡献者',
+        editLinkText: '在 GitHub 上编辑此页',
+        lastUpdatedText: '上次更新于',
+        tip: '提示',
+        warning: '注意',
+        danger: '警告',
+        notFound: ['未找到页面'],
+        backToHome: '返回主页',
+        openInNewWindow: '在新窗口打开',
+      },
       '/en/': {
-        label: 'English',
-        selectText: 'Languages',
-        ariaLabel: 'Select language',
-        editLinkText: 'Edit this page on GitHub',
-        lastUpdated: 'Last Updated',
-        nav: require('./nav/en'),
-        sidebar: getSidebar(
-          'Basic Configure',
+        navbar: require('./nav/en'),
+        sidebar: getSidebar('/en', [
+          'Get Started',
+          'Basic Config',
           'Advanced Functions',
           'More Features',
-          '/en'
-        ),
-      },
-      '/': {
-        label: '简体中文',
-        selectText: '选择语言',
-        ariaLabel: '选择语言',
-        editLinkText: '在 GitHub 上编辑此页',
-        lastUpdated: '上次更新',
-        nav: require('./nav/zh'),
-        sidebar: getSidebar('基础配置', '高级功能', '更多玩法', ''),
+        ]),
+        selectLanguageName: 'English',
+        selectLanguageText: 'Languages',
+        selectLanguageAriaLabel: 'Select language',
+        editLinkText: 'Edit this page on GitHub',
+        lastUpdatedText: 'Last Updated',
+        tip: 'Tip',
+        warning: 'Note',
+        danger: 'Warn',
       },
     },
   },
-  plugin: [
-    (_) => ({
-      enhanceAppFiles: path.resolve(__dirname, 'enhanceApp.js'),
-    }),
-  ],
-};
 
-function getSidebar(groupA, groupB, groupC, lang) {
-  return [
-    lang + '/quick-start',
+  plugins: [
+    ['@vuepress/pwa'],
+    [
+      '@vuepress/pwa-popup',
+      {
+        locales: {
+          '/': {
+            message: '发现新内容可用',
+            buttonText: '刷新',
+          },
+          '/en/': {
+            message: 'New Content is available',
+            buttonText: 'Refresh',
+          },
+        },
+      },
+    ],
+    [
+      '@vuepress/search',
+      {
+        locales: {
+          '/': { placeholder: '搜索' },
+          '/en/': { placeholder: 'Search' },
+        },
+        maxSuggestions: 10,
+      },
+    ],
     {
-      title: groupA,
-      collapsable: false,
-      sidebarDepth: 2,
-      children: [lang + '/client/basic', lang + '/server/basic'],
+      extendsMarkdown: (md) => {
+        md.use(taskLists, { label: true, labelAfter: true });
+      },
+      clientAppEnhanceFiles: path.resolve(__dirname, 'appEnhance.js'),
     },
-    {
-      title: groupB,
-      collapsable: false,
-      sidebarDepth: 2,
-      children: [
-        lang + '/server/notification',
-        lang + '/server/socials',
-        lang + '/client/count',
-        lang + '/client/visitor',
-        lang + '/client/emoji',
-        lang + '/client/i18n',
-        lang + '/client/avatar',
-        lang + '/client/recentcomment',
-      ],
-    },
-    {
-      title: groupC,
-      children: [
-        lang + '/migration',
-        lang + '/server/databases',
-        !lang ? '/server/cloudbase' : undefined,
-        lang + '/server/vps-deploy',
-        lang + '/development',
-        lang + '/client/other',
-        lang + '/api',
-        lang + '/faq',
-      ].filter((v) => v),
-    },
-  ];
-}
+  ],
+
+  // watch navbar
+  onWatched: (_, watchers, restart) => {
+    const navbarWatcher = chokidar.watch('./nav/*.js', {
+      cwd: __dirname,
+      ignoreInitial: true,
+    });
+
+    navbarWatcher.on('change', async (file) => {
+      logger.info(`file ${file} is modified`);
+      await restart();
+    });
+
+    const sidebarWatcher = chokidar.watch('./sidebar.js', {
+      cwd: __dirname,
+      ignoreInitial: true,
+    });
+
+    sidebarWatcher.on('change', async (file) => {
+      logger.info(`file ${file} is modified`);
+      await restart();
+    });
+
+    watchers.push(navbarWatcher, sidebarWatcher);
+  },
+};
