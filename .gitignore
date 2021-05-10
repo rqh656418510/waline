@@ -29,9 +29,15 @@ docs/.vuepress/.temp
 dist/
 .env
 
-#vscode
+# set local env variables
+env.bat
+env.sh
+
+# vscode
 .vscode/
 
 # lock files
 package-lock.json
 yarn.lock
+
+.idea

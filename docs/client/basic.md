@@ -24,9 +24,9 @@ Waline 的服务端地址。
 
 ## wordLimit
 
-- 类型：`number | [number, number]`
-- 默认值：`0`
-- 必要性：`false`
+- 类型: `number | [number, number]`
+- 默认值: `0`
+- 必要性: `false`
 
 评论字数限制。填入单个数字时为最大字数限制。设置为 `0` 时无限制。
 
@@ -113,6 +113,17 @@ Waline 的服务端地址。
 
 文章访问量统计。
 
+## dark
+
+- 类型: `string`
+- 必填: 否
+
+是否开启暗黑模式适配，设置 `'auto'` 会根据设备暗黑模式自适应。填入 CSS 选择器会在对应选择器生效时启用夜间模式。
+
+比如你在使用 docusaurus，它会通过在 html 上设置 `data-theme="dark"` 开启暗黑模式。那么你需要将该内容传入 `dark` 选项。
+
+自定义样式与暗黑模式详见 [自定义样式](./style.md)。
+
 ## highlight
 
 - 类型: `boolean`
@@ -124,7 +135,7 @@ Waline 的服务端地址。
 ## avatarCDN
 
 - 类型: `string`
-- 默认值: `https://cdn.v2ex.com/gravatar/`
+- 默认值: `https://sdn.geekzu.org/avatar/`
 - 必填: 否
 
 设置 Gravatar 头像 CDN 地址。

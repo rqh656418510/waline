@@ -1,6 +1,6 @@
 module.exports = (lang, titles) =>
   [
-    [lang + '/get-started.md', lang + '/intro.md'],
+    [lang + '/get-started.md', lang + '/intro.md', lang + '/syntax.md'],
     [lang + '/client/basic.md', lang + '/server/basic.md'],
     [
       lang + '/server/notification.md',
@@ -10,6 +10,7 @@ module.exports = (lang, titles) =>
       lang + '/client/emoji.md',
       lang + '/client/i18n.md',
       lang + '/client/avatar.md',
+      lang + '/client/style.md',
       lang + '/client/recentcomment.md',
     ],
     [
