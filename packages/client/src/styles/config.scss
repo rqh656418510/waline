@@ -17,7 +17,7 @@
   --waline-bgcolor-light: #f8f8f8;
   --waline-border-color: #ddd;
   --waline-disable-bgcolor: #f8f8f8;
-  --waline-disable-color: #ddd;
+  --waline-disable-color: #bbb;
   --waline-code-bgcolor: #282c34;
 
   // special colors
@@ -38,6 +38,7 @@
   // ====render choises====
   //   ** using border **
   --waline-border: 1px solid var(--waline-border-color);
+  --waline-avatar-radius: 50%;
   --waline-box-shadow: none;
 
   // ** using box-shadow **
