@@ -22,6 +22,7 @@ waline:
   enable: false
   serverURL: https://waline.vercel.app # Waline server address url
   placeholder: Just go go # Comment box placeholder
+  dark: auto # Dark mode css selector
   avatar: mm # Gravatar style
   meta: [nick, mail, link] # Custom comment header
   pageSize: 10 # Pagination size

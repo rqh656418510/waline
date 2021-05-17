@@ -11,7 +11,7 @@
 ``` yml
 waline:
   enable: true
-  dark: 'auto'      # Dark mode css selector, for more information: https://waline.js.org/client/basic.html#dark
+  dark: auto  # Dark mode css selector, for more information: https://waline.js.org/client/basic.html#dark
 ```
 
 # (2021-05-05)
