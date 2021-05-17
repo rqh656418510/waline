@@ -1,9 +1,9 @@
 {
   "name": "hexo-waline-next",
-  "version": "2.0.5",
+  "version": "2.0.7",
   "description": "Waline comment system for NexT.",
   "main": "index.js",
-  "repository": "rqh656418510/waline",
+  "repository": "rqh656418510/waline/tree/master/packages/hexo-next",
   "keywords": [
     "Hexo",
     "NexT",
