@@ -1,7 +1,7 @@
 {
   "name": "@waline/client",
   "description": "client for waline comment system",
-  "version": "0.16.2",
+  "version": "0.17.0",
   "keywords": [
     "valine",
     "waline",
@@ -21,8 +21,9 @@
   },
   "browserslist": {
     "production": [
-      ">0.2%",
+      ">0.5%",
       "not dead",
+      "not ie 11",
       "not op_mini all"
     ],
     "development": [
