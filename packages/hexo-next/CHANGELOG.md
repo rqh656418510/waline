@@ -1,3 +1,30 @@
+# (2021-05-19)
+
+### Version
+
+- 2.0.9
+
+### Features
+
+- update options
+
+``` yml
+waline:
+  enable: true
+  requiredMeta: [] # Set required fields: [nick] | [nick, mail]
+  copyright: true # Display the footer copyright information
+```
+
+# (2021-05-18)
+
+### Version
+
+- 2.0.8
+
+### Features
+
+- update READE.md and CHANGELOG.md
+
 # (2021-05-17)
 
 ### Version
@@ -6,12 +33,12 @@
 
 ### Features
 
-- support dark mode for waline
+- support dark mode
 
 ``` yml
 waline:
   enable: true
-  dark: auto  # Dark mode css selector, for more information: https://waline.js.org/client/basic.html#dark
+  dark: auto # Dark mode css selector, for more information: https://waline.js.org/client/basic.html#dark
 ```
 
 # (2021-05-05)

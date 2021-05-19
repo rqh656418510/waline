@@ -12,4 +12,5 @@ waline:
   # Warning: Do not enable both `waline.visitor` and `leancloud_visitors`.
   visitor: false # Article reading statistic
   comment_count: true # If false, comment count will only be displayed in post page, not in home page
-  requiredFields: [] # Set required fields: [nick] | [nick, mail]
+  requiredMeta: [] # Set required fields: [nick] | [nick, mail]
+  copyright: true # Display the footer copyright information

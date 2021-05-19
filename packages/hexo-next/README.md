@@ -22,7 +22,7 @@ waline:
   enable: false
   serverURL: https://waline.vercel.app # Waline server address url
   placeholder: Just go go # Comment box placeholder
-  dark: auto # Dark mode css selector
+  dark: auto # Dark mode css selector, for more information: https://waline.js.org/client/basic.html#dark
   avatar: mm # Gravatar style
   meta: [nick, mail, link] # Custom comment header
   pageSize: 10 # Pagination size
@@ -30,9 +30,10 @@ waline:
   # Warning: Do not enable both `waline.visitor` and `leancloud_visitors`.
   visitor: false # Article reading statistic
   comment_count: true # If false, comment count will only be displayed in post page, not in home page
-  requiredFields: [] # Set required fields: [nick] | [nick, mail]
+  requiredMeta: [] # Set required fields: [nick] | [nick, mail]
   libUrl: # Set custom library cdn url
   avatarCDN: # Set custom gravatar cdn url
+  copyright: true # Display the footer copyright information
 ```
 
 ## Compatibility
