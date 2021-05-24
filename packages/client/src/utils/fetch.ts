@@ -5,7 +5,7 @@ export interface FetchCountOptions {
   paths: string[];
 }
 
-export const fetchCount = ({
+export const fetchCommentCount = ({
   serverURL,
   paths,
 }: FetchCountOptions): Promise<number | number[]> =>
@@ -18,7 +18,7 @@ export interface FetchRecentOptions {
   count: number;
 }
 
-export const fetchRecent = ({
+export const fetchRecentComment = ({
   serverURL,
   count,
 }: FetchRecentOptions): Promise<Comment[]> => {
@@ -39,7 +39,7 @@ export interface FetchListResult {
   totalPages: number;
 }
 
-export const fetchList = ({
+export const fetchCommentList = ({
   serverURL,
   path,
   page,
@@ -54,16 +54,23 @@ export const fetchList = ({
 
 export interface PostCommentOptions {
   serverURL: string;
+  lang: string;
   token?: string;
   comment: CommentData;
 }
 
+export interface PostCommentResponse {
+  data: unknown;
+  errmsg?: string;
+}
+
 export const postComment = ({
   serverURL,
+  lang,
   token,
   comment,
-}: PostCommentOptions) => {
-  const url = `${serverURL}/comment`;
+}: PostCommentOptions): Promise<PostCommentResponse> => {
+  const url = `${serverURL}/comment?lang=${lang}`;
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -75,5 +82,5 @@ export const postComment = ({
     method: 'POST',
     headers,
     body: JSON.stringify(comment),
-  }).then((resp) => resp.json());
+  }).then((resp) => resp.json() as Promise<PostCommentResponse>);
 };

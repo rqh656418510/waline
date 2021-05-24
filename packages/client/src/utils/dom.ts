@@ -21,21 +21,15 @@ export const injectDarkStyle = (selector?: string | boolean): void => {
 };
 
 export const registerMathML = (): void => {
-  // First check whether the page contains any <math> element.
-  const namespaceURI = 'http://www.w3.org/1998/Math/MathML';
-
   // Create a div to test mspace, using Kuma's "offscreen" CSS
   document.body.insertAdjacentHTML(
     'afterbegin',
-    "<div style='border: 0; clip: rect(0 0 0 0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; width: 1px;'><math xmlns='" +
-      namespaceURI +
-      "'><mspace height='23px' width='77px'></mspace></math></div>"
+    "<div style='border: 0; clip: rect(0 0 0 0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; width: 1px;'><math xmlns='http://www.w3.org/1998/Math/MathML'><mspace height='23px' width='77px'></mspace></math></div>"
   );
   const div = document.body.firstChild as HTMLElement;
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const box = (
-    div.firstChild!.firstChild as HTMLElement
-  ).getBoundingClientRect();
+  const box =
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    (div.firstChild!.firstChild as HTMLElement).getBoundingClientRect();
 
   document.body.removeChild(div);
 

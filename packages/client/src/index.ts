@@ -1,6 +1,8 @@
+import mitt from 'mitt';
 import { createApp, ref } from 'vue';
-import { checkOptions, getConfig } from './config';
+import { getConfig } from './config';
 import {
+  checkOptions,
   injectDarkStyle,
   registerMathML,
   updateCommentCount,
@@ -8,18 +10,22 @@ import {
 } from './utils';
 import { RecentComments } from './widget';
 import App from './App.vue';
-
 import type { Config, WalineOptions } from './config';
+
+export type { Locale as WalineLocale, WalineOptions } from './config';
+export type { Comment as WalineComment } from './typings';
 
 import './styles/index.scss';
 
 declare const VERSION: string;
 
+const event = mitt();
+
 const domRender = (config: Config): void => {
   const { path, serverURL, visitor } = config;
 
   // visitor count
-  if (visitor) updateVisitor({ path, serverURL });
+  if (visitor) updateVisitor({ serverURL, path });
 
   // comment count
   updateCommentCount(serverURL);
@@ -30,6 +36,7 @@ export interface WalineInstance {
   destroy: () => void;
 }
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 function Waline(options: WalineOptions): WalineInstance | void {
   let temp = options;
   const config = ref(getConfig(options));
@@ -47,15 +54,17 @@ function Waline(options: WalineOptions): WalineInstance | void {
   // mount waline
   const app = createApp(App)
     .provide('config', config)
+    .provide('event', event)
     .provide('version', VERSION);
 
   app.mount(options.el || '#waline');
 
   return {
-    update: (newOptons: Partial<WalineOptions>): void => {
-      temp = { ...temp, ...newOptons };
+    update: (newOptions: Partial<WalineOptions> = {}): void => {
+      temp = { ...temp, ...newOptions };
 
       config.value = getConfig(temp);
+      event.emit('update');
       domRender(config.value);
     },
     destroy: (): void => {

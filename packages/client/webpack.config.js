@@ -46,6 +46,10 @@ module.exports = {
         test: /\.ts?$/,
         use: [
           {
+            loader: 'babel-loader',
+            options: { cacheDirectory: true },
+          },
+          {
             loader: 'ts-loader',
             options: {
               transpileOnly: true,
@@ -102,11 +106,11 @@ module.exports = {
           <div id="waline" style="max-width: 800px;margin: 0 auto;"></div>
           ${htmlWebpackPlugin.tags.bodyTags}
           <script>
-            new Waline({
+            const waline = new Waline({
               el: '#waline',
               path: '/',
               visitor: true,
-              serverURL: 'http://localhost:9090'
+              serverURL: '${process.env.SERVERURL || 'http://localhost:9090'}'
             });
           </script>
         </body>

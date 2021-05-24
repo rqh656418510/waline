@@ -179,7 +179,7 @@ export interface WalineOptions {
    *
    * @see [I18n](https://waline.js.org/en/client/i18n.html)
    */
-  locale?: Locale;
+  locale?: Partial<Locale>;
 
   /**
    * 文章访问量统计
@@ -230,25 +230,13 @@ export interface WalineOptions {
   avatarForce?: boolean;
 
   /**
-   * 设置**表情包 CDN**
+   * 设置表情包
    *
-   * @see [自定义表情包](https://waline.js.org/client/emoji.html)
+   * Set Emojis
    *
-   * Set **Emoji Pack CDN**
-   *
-   * @see [Custom Emoji](https://waline.js.org/en/client/emoji.html)
-   *
-   * @default 'https://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/'
+   * @default ['https://cdn.jsdelivr.net/gh/walinejs/emojis/weibo']
    */
-  emojiCDN?: string;
-
-  /**
-   * 设置**表情包映射**，详见 [自定义表情](https://waline.js.org/client/emoji.html)
-   *
-   * @default 微博表情包
-   */
-
-  emojiMaps?: EmojiMaps;
+  emojis?: string[];
 
   /**
    * 自定义图片上传方法，方便更好的存储图片
@@ -281,7 +269,7 @@ export interface WalineOptions {
   login?: 'enable' | 'disable' | 'force';
 
   /**
-   * @deprecated Use `login` instead, will be dropped in V1
+   * @deprecated Use `login` instead, will be dropped in future versions of V1
    *
    * 是否允许登录评论
    *
@@ -309,17 +297,48 @@ export interface WalineOptions {
   copyright?: boolean;
 
   /**
-   * @deprecated Use `locale.placeholder` instead, will be dropped in V1
+   * @deprecated Use `locale.placeholder` instead, will be dropped in future versions of V1
    */
   placeholder?: string;
 
   /**
-   * @deprecated Use `locale` instead, will be dropped in V1
+   * @deprecated Use `locale` instead, will be dropped in future versions of V1
    */
   langMode?: Locale;
 
   /**
-   * @deprecated Use `requiredMeta` instead, will be dropped in V1
+   * @deprecated Use `requiredMeta` instead, will be dropped in future versions of V1
    */
   requiredFields?: Meta[];
+
+  /**
+   * @deprecated Use `emojis` instead, will be dropped in future versions of V1
+   *
+   * 设置**表情包 CDN**
+   *
+   * @see [自定义表情包](https://waline.js.org/client/emoji.html)
+   *
+   * Set **Emoji Pack CDN**
+   *
+   * @see [Custom Emoji](https://waline.js.org/en/client/emoji.html)
+   *
+   * @default 'https://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/'
+   */
+  emojiCDN?: string;
+
+  /**
+   * @deprecated Use `emojis` instead, will be dropped in future versions of V1
+   *
+   * 设置**表情包映射**
+   *
+   * @see [自定义表情](https://waline.js.org/client/emoji.html)
+   *
+   * Set **emoji maps**
+   *
+   * @see [Custom Emoji](https://waline.js.org/en/client/emoji.html)
+   *
+   * @default 微博表情包
+   */
+
+  emojiMaps?: EmojiMaps;
 }
