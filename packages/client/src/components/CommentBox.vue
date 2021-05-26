@@ -69,9 +69,9 @@
         id="vedit"
         :placeholder="replyUser ? `@${replyUser}` : locale.placeholder"
         v-model="inputs.editor"
-        @keyDown="onKeyDown"
+        @keydown="onKeyDown"
+        @drop="onDrop"
         @paste="onPaste"
-        @input="onEditorChange($event.target)"
       />
 
       <div
@@ -83,39 +83,55 @@
       </div>
 
       <div class="vfooter">
-        <div class="vaction">
+        <div class="vactions">
           <a
             href="https://guides.github.com/features/mastering-markdown/"
             title="Markdown Guide"
             aria-label="Markdown is supported"
-            class="vicon"
+            class="vaction"
             target="_blank"
             rel="noreferrer"
           >
             <MarkdownIcon />
           </a>
 
-          <span
-            :class="{ vicon: true, actived: showEmoji }"
-            role="button"
-            tabindex="0"
+          <button
+            class="vaction"
+            :class="{ actived: showEmoji }"
             :title="locale.emoji"
             :aria-label="locale.emoji"
             @click="showEmoji = !showEmoji"
           >
             <EmojiIcon />
-          </span>
+          </button>
 
-          <span
-            :class="{ vicon: true, actived: showPreview }"
-            role="button"
-            tabindex="0"
+          <label
+            for="image-upload"
+            class="vaction"
+            :title="locale.uploadImage"
+            :aria-label="locale.uploadImage"
+          >
+            <ImageIcon />
+
+            <input
+              ref="imageUploadRef"
+              class="upload"
+              id="image-upload"
+              type="file"
+              accept=".png,.jpg,.jpeg,.webp,.bmp,.gif"
+              @change="onChange"
+            />
+          </label>
+
+          <button
+            class="vaction"
+            :class="{ actived: showPreview }"
             :title="locale.preview"
             :aria-label="locale.preview"
             @click="showPreview = !showPreview"
           >
             <PreviewIcon />
-          </span>
+          </button>
         </div>
 
         <div class="vinfo">
@@ -146,26 +162,44 @@
           </button>
         </div>
 
-        <div v-if="showEmoji" class="vemoji-wrapper">
-          <i
-            v-for="(item, key) in config.emojiMaps"
-            :key="key"
-            :title="key"
-            role="button"
-            @click="insertAtCursor(editorRef, `:${key}:`)"
-          >
-            <img
-              class="vemoji"
-              :src="
-                /^(?:https?:)?\/\//u.test(item)
-                  ? item
-                  : `${config.emojiCDN}${item}`
-              "
-              :alt="key"
-              loading="lazy"
-              referrerPolicy="no-referrer"
-            />
-          </i>
+        <div v-if="showEmoji" class="vemoji-popup">
+          <template v-for="(config, index) in emoji.tabs" :key="config.name">
+            <div v-if="index === emojiTabIndex" class="vtab-wrapper">
+              <button
+                v-for="key in config.items"
+                :key="key"
+                :title="key"
+                :aria-label="key"
+                @click="insert(`:${key}:`)"
+              >
+                <img
+                  class="vemoji"
+                  :src="emoji.map[key]"
+                  :alt="key"
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
+                />
+              </button>
+            </div>
+          </template>
+          <div v-if="emoji.tabs.length > 1" class="vtabs">
+            <button
+              v-for="(config, index) in emoji.tabs"
+              :key="config.name"
+              class="vtab"
+              :class="{ active: emojiTabIndex === index }"
+              @click="emojiTabIndex = index"
+            >
+              <img
+                class="vemoji"
+                :src="config.icon"
+                :alt="config.name"
+                :title="config.name"
+                loading="lazy"
+                referrerPolicy="no-referrer"
+              />
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -179,20 +213,22 @@ import autosize from 'autosize';
 import {
   CloseIcon,
   EmojiIcon,
+  ImageIcon,
   MarkdownIcon,
   PreviewIcon,
   LoadingIcon,
 } from './Icons';
 import { useUserInfo } from '../composables';
 import {
+  getImagefromDataTransfer,
   parseMarkdown,
   getWordNumber,
-  insertAtCursor,
   parseEmoji,
   postComment,
   store,
 } from '../utils';
 
+import type { EmojiConfig } from '../config';
 import type { CommentData, ConfigRef } from '../typings';
 
 export default defineComponent({
@@ -201,6 +237,7 @@ export default defineComponent({
   components: {
     CloseIcon,
     EmojiIcon,
+    ImageIcon,
     MarkdownIcon,
     PreviewIcon,
     LoadingIcon,
@@ -236,8 +273,11 @@ export default defineComponent({
     });
 
     const inputRefs = ref<Record<string, HTMLInputElement>>({});
-    const editorRef = ref<HTMLElement | null>(null);
+    const editorRef = ref<HTMLTextAreaElement | null>(null);
+    const imageUploadRef = ref<HTMLInputElement | null>(null);
 
+    const emoji = ref<EmojiConfig>({ tabs: [], map: {} });
+    const emojiTabIndex = ref(0);
     const showEmoji = ref(false);
     const showPreview = ref(false);
     const previewText = ref('');
@@ -252,82 +292,81 @@ export default defineComponent({
 
     const locale = computed(() => config.value.locale);
 
-    const onEditorChange = (textArea: HTMLTextAreaElement): void => {
-      const comment = textArea.value;
+    const insert = (content: string): void => {
+      const textArea = editorRef.value as HTMLTextAreaElement;
+      const startPosition = textArea.selectionStart;
+      const endPosition = textArea.selectionEnd || 0;
+      const scrollTop = textArea.scrollTop;
 
-      content.value = comment;
-      previewText.value = parseMarkdown(comment, config.value);
-      wordNumber.value = getWordNumber(comment);
-
-      if (comment) autosize(textArea);
-      else autosize.destroy(textArea);
-    };
-
-    const insert = (textArea: HTMLTextAreaElement, content: string): void => {
-      insertAtCursor(textArea, content);
-      onEditorChange(textArea);
+      inputs.editor =
+        textArea.value.substring(0, startPosition) +
+        content +
+        textArea.value.substring(endPosition, textArea.value.length);
+      textArea.focus();
+      textArea.selectionStart = startPosition + content.length;
+      textArea.selectionEnd = startPosition + content.length;
+      textArea.scrollTop = scrollTop;
     };
 
     const onKeyDown = (event: KeyboardEvent): void => {
       const key = event.key;
 
       // Shortcut key
-      if (event.ctrlKey || (event.metaKey && key === 'Enter')) submitComment();
+      if ((event.ctrlKey || event.metaKey) && key === 'Enter') submitComment();
 
       // tab key
       if (key === 'Tab') {
         event.preventDefault();
-        insert(event.target as HTMLTextAreaElement, '    ');
+        insert('    ');
+      }
+    };
+
+    const uploadImage = (file: File): Promise<void> => {
+      const uploadText = `![${config.value.locale.uploading} ${file.name}]()`;
+
+      insert(uploadText);
+
+      return Promise.resolve()
+        .then(() => config.value.uploadImage(file))
+        .then((url) => {
+          inputs.editor = inputs.editor.replace(
+            uploadText,
+            `\r\n![${file.name}](${url})`
+          );
+        });
+    };
+
+    const onDrop = (event: DragEvent): void => {
+      if (event.dataTransfer?.items) {
+        const file = getImagefromDataTransfer(event.dataTransfer.items);
+
+        if (file) {
+          uploadImage(file);
+          event.preventDefault();
+        }
       }
     };
 
     const onPaste = (event: ClipboardEvent): void => {
-      const { clipboardData, target } = event;
-      const files: File[] = [];
+      if (event.clipboardData) {
+        const file = getImagefromDataTransfer(event.clipboardData.items);
 
-      if (clipboardData) {
-        const { items } = clipboardData;
-
-        if (items && items.length) {
-          // 检索剪切板 items
-          for (let i = 0; i < items.length; i++) {
-            if (items[i].type.indexOf('image') !== -1) {
-              files.push(items[i].getAsFile() as File);
-              break;
-            }
-          }
-        }
-      }
-
-      if (files.length) {
-        files.forEach((file) => {
-          const uploadText = `![${config.value.locale.uploading} ${file['name']}]()`;
-
-          insert(target as HTMLTextAreaElement, uploadText);
-
-          void Promise.resolve()
-            .then(() => config.value.uploadImage(file))
-            .then((url) => {
-              inputs.editor = inputs.editor.replace(
-                uploadText,
-                `\r\n![${file.name}](${url})`
-              );
-              onEditorChange(target as HTMLTextAreaElement);
-            });
-        });
+        if (file) uploadImage(file);
       }
     };
 
+    const onChange = (): void => {
+      const inputElement = imageUploadRef.value as HTMLInputElement;
+
+      if (inputElement.files)
+        uploadImage(inputElement.files[0]).then(() => {
+          // clear input so a same image can be uploaded later
+          inputElement.value = '';
+        });
+    };
+
     const submitComment = (): void => {
-      const {
-        serverURL,
-        lang,
-        emojiCDN,
-        emojiMaps,
-        login,
-        wordLimit,
-        requiredMeta,
-      } = config.value;
+      const { serverURL, lang, login, wordLimit, requiredMeta } = config.value;
 
       const comment: CommentData = {
         comment: content.value,
@@ -382,7 +421,7 @@ export default defineComponent({
             .replace('$2', wordNumber.value.toString())
         );
 
-      comment.comment = parseEmoji(comment.comment, emojiMaps, emojiCDN);
+      comment.comment = parseEmoji(comment.comment, emoji.value.map);
 
       if (props.replyId && props.rootId) {
         comment.pid = props.replyId;
@@ -489,6 +528,36 @@ export default defineComponent({
       });
     };
 
+    // initial set of emoji
+    config.value.emoji.then((emojiConfig) => {
+      emoji.value = emojiConfig;
+    });
+
+    // watch editor
+    watch(
+      () => inputs.editor,
+      (value) => {
+        const { highlight } = config.value;
+
+        content.value = value;
+        previewText.value = parseMarkdown(value, highlight, emoji.value.map);
+        wordNumber.value = getWordNumber(value);
+
+        if (editorRef.value)
+          if (value) autosize(editorRef.value);
+          else autosize.destroy(editorRef.value);
+      }
+    );
+
+    // watch emoji value change
+    watch(
+      () => config.value.emoji,
+      (emojiConfig) =>
+        emojiConfig.then((config) => {
+          emoji.value = config;
+        })
+    );
+
     // update wordNumber
     watch([config, wordNumber], ([config, wordNumber]) => {
       const { wordLimit: limit } = config;
@@ -516,8 +585,9 @@ export default defineComponent({
       locale,
 
       // events
-      insertAtCursor,
-      onEditorChange,
+      insert,
+      onChange,
+      onDrop,
       onKeyDown,
       onPaste,
       onLogin,
@@ -537,6 +607,8 @@ export default defineComponent({
       inputs,
 
       // emoji
+      emoji,
+      emojiTabIndex,
       showEmoji,
 
       // preview
@@ -546,6 +618,7 @@ export default defineComponent({
       // ref
       inputRefs,
       editorRef,
+      imageUploadRef,
     };
   },
 });
