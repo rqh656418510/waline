@@ -19,7 +19,7 @@
           <img
             :src="
               userInfo.avatar ||
-              `${config.avatarCDN}${userInfo.mailMd5}${config.avatarParam}`
+              `${config.avatar.cdn}${userInfo.mailMd5}${config.avatar.param}`
             "
             alt="avatar"
           />
@@ -228,8 +228,10 @@ import {
   store,
 } from '../utils';
 
-import type { EmojiConfig } from '../config';
 import type { CommentData, ConfigRef } from '../typings';
+import type { EmojiConfig } from '../utils';
+
+const infoStore = store('WALINE_USER_CACHE');
 
 export default defineComponent({
   name: 'CommentBox',
@@ -266,9 +268,9 @@ export default defineComponent({
     const { userInfo, setUserInfo } = useUserInfo();
 
     const inputs = reactive({
-      nick: store.getItem('nick') || '',
-      mail: store.getItem('mail') || '',
-      link: store.getItem('link') || '',
+      nick: infoStore.get<string>('nick') || '',
+      mail: infoStore.get<string>('mail') || '',
+      link: infoStore.get<string>('link') || '',
       editor: '',
     });
 
@@ -440,7 +442,7 @@ export default defineComponent({
         (resp) => {
           isSubmitting.value = false;
 
-          store.setItem({
+          infoStore.update({
             nick: comment.nick,
             link: comment.link,
             mail: comment.mail,

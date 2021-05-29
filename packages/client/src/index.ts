@@ -1,8 +1,8 @@
-import mitt from 'mitt';
 import { createApp, ref } from 'vue';
-import { getConfig } from './config';
 import {
   checkOptions,
+  getConfig,
+  getEvent,
   injectDarkStyle,
   registerMathML,
   updateCommentCount,
@@ -10,25 +10,25 @@ import {
 } from './utils';
 import { RecentComments } from './widget';
 import App from './App.vue';
-import type { Config, WalineOptions } from './config';
+
+import type { WalineOptions } from './config';
+import type { Config } from './utils';
 
 export type { Locale as WalineLocale, WalineOptions } from './config';
 export type { Comment as WalineComment } from './typings';
 
-import './styles/index.scss';
+import '@style';
 
 declare const VERSION: string;
 
-const event = mitt();
-
-const domRender = (config: Config): void => {
+const domRender = (config: Config, signal: AbortSignal): void => {
   const { path, serverURL, visitor } = config;
 
   // visitor count
-  if (visitor) updateVisitor({ serverURL, path });
+  if (visitor) void updateVisitor({ serverURL, path, signal });
 
   // comment count
-  updateCommentCount(serverURL);
+  updateCommentCount(serverURL, signal);
 };
 
 export interface WalineInstance {
@@ -38,7 +38,9 @@ export interface WalineInstance {
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 function Waline(options: WalineOptions): WalineInstance | void {
-  let temp = options;
+  let prevOptions = options;
+  let controller = new AbortController();
+  const event = getEvent();
   const config = ref(getConfig(options));
 
   if (!checkOptions(options)) return;
@@ -49,10 +51,10 @@ function Waline(options: WalineOptions): WalineInstance | void {
   // mathml
   window.addEventListener('load', registerMathML);
 
-  domRender(config.value);
+  domRender(config.value, controller.signal);
 
   // mount waline
-  const app = createApp(App)
+  const app = createApp(App, { signal: controller.signal })
     .provide('config', config)
     .provide('event', event)
     .provide('version', VERSION);
@@ -61,11 +63,16 @@ function Waline(options: WalineOptions): WalineInstance | void {
 
   return {
     update: (newOptions: Partial<WalineOptions> = {}): void => {
-      temp = { ...temp, ...newOptions };
+      prevOptions = { ...prevOptions, ...newOptions };
 
-      config.value = getConfig(temp);
-      event.emit('update');
-      domRender(config.value);
+      config.value = getConfig(prevOptions);
+
+      // abort previous requests and update controller
+      controller.abort();
+      controller = new AbortController();
+
+      event.emit('render', controller.signal);
+      domRender(config.value, controller.signal);
     },
     destroy: (): void => {
       app.unmount();

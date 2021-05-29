@@ -1,25 +1,38 @@
-import type { UserInfo } from '../composables';
+export interface Store {
+  get: <T = unknown>(key: string) => T | null;
+  set: <T = unknown>(key: string, content: T) => void;
+  update: <T = unknown>(content: T) => void;
+}
 
-const CACHE_KEY = 'ValineCache';
+export const store = (cacheKey: string): Store => {
+  let storage: Record<string, unknown> = {};
+  const content = localStorage.getItem(cacheKey);
 
-export const store = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  getItem(key: string): string {
-    const userInfoString = localStorage.getItem(CACHE_KEY);
+  if (content) {
+    try {
+      storage = JSON.parse(content) as Record<string, unknown>;
+    } catch (err) {
+      // do nothing
+    }
+  }
 
-    if (userInfoString) {
+  return {
+    get: <T>(key: string): T | null => (storage[key] as T) || null,
+
+    set<T>(key: string, content: T): void {
       try {
-        const result = JSON.parse(userInfoString) as UserInfo;
-
-        return result[key as keyof UserInfo] || '';
+        // make sure the content can be stringify and make a deep copy here
+        storage[key] = JSON.parse(JSON.stringify(content));
+        localStorage.setItem(cacheKey, JSON.stringify(storage));
       } catch (err) {
         // do nothing
       }
-    }
+    },
 
-    return '';
-  },
-  setItem<T = UserInfo>(content: T): void {
-    localStorage.setItem(CACHE_KEY, JSON.stringify(content));
-  },
+    update<T>(content: T): void {
+      // make sure the content can be stringify and make a deep copy here
+      storage = JSON.parse(JSON.stringify(content)) as Record<string, unknown>;
+      localStorage.setItem(cacheKey, JSON.stringify(storage));
+    },
+  };
 };

@@ -1,6 +1,13 @@
-import { removeEndingSplash } from './string';
+import { store } from './store';
+import { removeEndingSplash } from './path';
 
-import type { EmojiConfig, EmojiInfo, EmojiMaps } from '../config';
+import type { EmojiInfo, EmojiMaps } from '../config';
+import type { EmojiConfig } from './config';
+
+const emojiStore = store('WALINE_EMOJI');
+
+const hasVersion = (url: string): boolean =>
+  Boolean(/@[0-9]+\.[0-9]+\.[0-9]+/.test(url));
 
 // TODO: remove
 export const resolveOldEmojiMap = (
@@ -27,13 +34,34 @@ export const resolveOldEmojiMap = (
   };
 };
 
-export const fetchEmoji = (link: string): Promise<EmojiInfo> =>
-  fetch(`${link}/info.json`)
+const fetchEmoji = (link: string): Promise<EmojiInfo> => {
+  const result = hasVersion(link);
+
+  if (result) {
+    const info = emojiStore.get<EmojiInfo>(link);
+    if (info) return Promise.resolve(info);
+  }
+
+  return fetch(`${link}/info.json`)
     .then((resp) => resp.json() as Promise<Omit<EmojiInfo, 'folder'>>)
-    .then((emojiInfo) => ({
-      folder: link,
-      ...emojiInfo,
-    }));
+    .then((emojiInfo) => {
+      const info = {
+        folder: link,
+        ...emojiInfo,
+      };
+
+      if (result) emojiStore.set(link, info);
+
+      return info;
+    });
+};
+
+const getLink = (
+  name: string,
+  folder: string,
+  prefix = '',
+  type = ''
+): string => `${folder}/${prefix}${name}${type ? `.${type}` : ''}`;
 
 export const getEmojis = (
   emojis: (string | EmojiInfo)[]
@@ -55,11 +83,11 @@ export const getEmojis = (
 
       emojiConfig.tabs.push({
         name,
-        icon: `${folder}/${prefix}${icon}.${type}`,
+        icon: getLink(icon, folder, prefix, type),
         items: items.map((item) => {
-          const key = `${prefix}${item}`;
+          const key = `${prefix || ''}${item}`;
 
-          emojiConfig.map[key] = `${folder}/${prefix}${item}.${type}`;
+          emojiConfig.map[key] = getLink(item, folder, prefix, type);
 
           return key;
         }),

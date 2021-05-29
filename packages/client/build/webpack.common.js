@@ -3,18 +3,17 @@ const webpack = require('webpack');
 const htmlWebpackPlugin = require('html-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const { VueLoaderPlugin } = require('vue-loader');
-const { version } = require('./package.json');
+const { version } = require('../package.json');
 
 const pkgName = 'Waline';
 
 module.exports = {
   entry: {
-    [`${pkgName}.min`]: path.resolve(__dirname, 'src/index.ts'),
+    main: path.resolve(__dirname, '../src/index.ts'),
   },
 
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: '[name].js',
+    path: path.resolve(__dirname, '../dist'),
     library: pkgName,
     libraryExport: 'default',
     libraryTarget: 'umd',
@@ -106,14 +105,14 @@ module.exports = {
           <div id="waline" style="max-width: 800px;margin: 0 auto;"></div>
           ${htmlWebpackPlugin.tags.bodyTags}
           <script>
-            const waline = new Waline({
+            const waline = Waline({
               el: '#waline',
               path: '/',
               visitor: true,
               serverURL: '${process.env.SERVERURL || 'http://localhost:9090'}',
               emoji: [
-                'https://cdn.jsdelivr.net/gh/walinejs/emojis/bilibili',
-                'https://cdn.jsdelivr.net/gh/walinejs/emojis/qq'
+                'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+                'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq'
               ]
             });
           </script>
