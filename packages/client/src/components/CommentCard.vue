@@ -29,16 +29,14 @@
 
         <span class="vtime" v-text="timeAgo(comment.insertedAt, locale)" />
 
-        <span
+        <button
           class="vreply"
-          :title="locale.reply"
-          :aria-label="locale.reply"
-          role="button"
-          tabindex="0"
-          @click="reply = comment"
+          :class="{ active: isReplyingCurrent }"
+          :title="isReplyingCurrent ? locale.cancelReply : locale.reply"
+          @click="$emit('reply', isReplyingCurrent ? null : comment)"
         >
           <ReplyIcon />
-        </span>
+        </button>
       </div>
       <div class="vmeta" aria-hidden="true">
         <span v-text="comment.browser" />
@@ -46,13 +44,13 @@
       </div>
       <div class="vcontent" v-html="comment.comment" />
 
-      <div v-if="reply" class="vreply-wrapper">
+      <div v-if="isReplyingCurrent" class="vreply-wrapper">
         <CommentBox
-          :replyId="reply.objectId"
-          :replyUser="reply.nick"
+          :replyId="comment.objectId"
+          :replyUser="comment.nick"
           :rootId="rootId"
-          @submit="$emit('submit')"
-          @cancel-reply="reply = null"
+          @submit="$emit('submit', $event)"
+          @cancel-reply="$emit('reply', null)"
         />
       </div>
       <div v-if="comment.children" class="vquote">
@@ -60,8 +58,10 @@
           v-for="child in comment.children"
           :key="child.objectId"
           :comment="child"
+          :reply="reply"
           :rootId="rootId"
-          @submit="$emit('submit')"
+          @reply="$emit('reply', $event)"
+          @submit="$emit('submit', $event)"
         />
       </div>
     </div>
@@ -69,13 +69,14 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, inject, ref } from 'vue';
+import { computed, defineComponent, inject } from 'vue';
 import CommentBox from './CommentBox.vue';
 import { ReplyIcon } from './Icons';
 import { isLinkHttp, timeAgo } from '../utils';
 
 import type { PropType } from 'vue';
-import type { Comment, ConfigRef } from '../typings';
+import type { ConfigRef } from '../composables';
+import type { Comment } from '../typings';
 
 export default defineComponent({
   props: {
@@ -87,6 +88,9 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    reply: {
+      type: Object as PropType<Comment | null>,
+    },
   },
 
   components: {
@@ -94,27 +98,28 @@ export default defineComponent({
     ReplyIcon,
   },
 
-  emits: ['submit'],
+  emits: ['submit', 'reply'],
 
   setup(props) {
     const config = inject<ConfigRef>('config') as ConfigRef;
-
-    const reply = ref(null);
-
     const locale = computed(() => config.value.locale);
 
     const link = computed(() => {
       let { link } = props.comment;
 
-      return link && isLinkHttp(link) ? link : `https://${link}`;
+      return link ? (isLinkHttp(link) ? link : `https://${link}`) : '';
     });
+
+    const isReplyingCurrent = computed(
+      () => props.comment.objectId === props.reply?.objectId
+    );
 
     return {
       config,
       locale,
 
+      isReplyingCurrent,
       link,
-      reply,
       timeAgo,
     };
   },

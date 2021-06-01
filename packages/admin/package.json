@@ -1,6 +1,6 @@
 {
   "name": "@waline/admin",
-  "version": "0.8.10",
+  "version": "0.8.11",
   "description": "management system for waline",
   "main": "dist/admin.js",
   "browser": "dist/admin.js",
@@ -12,8 +12,9 @@
   },
   "browserslist": {
     "production": [
-      ">0.2%",
+      ">0.5%",
       "not dead",
+      "not ie 11",
       "not op_mini all"
     ],
     "development": [

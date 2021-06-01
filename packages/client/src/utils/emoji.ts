@@ -1,10 +1,10 @@
-import { store } from './store';
+import { Store, useStore } from '../composables/store';
 import { removeEndingSplash } from './path';
 
 import type { EmojiInfo, EmojiMaps } from '../config';
 import type { EmojiConfig } from './config';
 
-const emojiStore = store('WALINE_EMOJI');
+let store: Store;
 
 const hasVersion = (url: string): boolean =>
   Boolean(/@[0-9]+\.[0-9]+\.[0-9]+/.test(url));
@@ -35,10 +35,12 @@ export const resolveOldEmojiMap = (
 };
 
 const fetchEmoji = (link: string): Promise<EmojiInfo> => {
+  if (!store) store = useStore('WALINE_EMOJI');
+
   const result = hasVersion(link);
 
   if (result) {
-    const info = emojiStore.get<EmojiInfo>(link);
+    const info = store.get<EmojiInfo>(link);
     if (info) return Promise.resolve(info);
   }
 
@@ -50,7 +52,7 @@ const fetchEmoji = (link: string): Promise<EmojiInfo> => {
         ...emojiInfo,
       };
 
-      if (result) emojiStore.set(link, info);
+      if (result) store.set(link, info);
 
       return info;
     });

@@ -4,11 +4,11 @@ title: Waline
 heroImage: /logo.png
 actions:
   - text: 💡 快速上手
-    link: /get-started.html
+    link: /guide/get-started.html
     type: primary
 
   - text: ℹ️ 介绍
-    link: /intro.html
+    link: /advanced/intro.html
     type: secondary
 
 features:
@@ -16,7 +16,7 @@ features:
     details: 完全的 Markdown 支持，同时包含表情、数学公式、HTML 嵌入
 
   - title: 轻量
-    details: 53kB gzip 的客户端大小
+    details: 53.3kB gzip 的客户端大小
 
   - title: 强大的安全性
     details: 内容校验、防灌水、保护敏感数据等

@@ -47,6 +47,7 @@
 
         font-weight: bold;
         font-size: 0.875em;
+        line-height: 1;
         text-decoration: none;
 
         cursor: pointer;
@@ -79,6 +80,11 @@
         float: right;
         cursor: pointer;
 
+        padding: 4px;
+        border: none;
+        background: transparent;
+        line-height: 1;
+
         transition: fill 0.2s ease;
 
         svg {
@@ -86,6 +92,12 @@
 
           &:hover {
             fill: var(--waline-theme-color);
+          }
+        }
+
+        &.active {
+          svg {
+            fill: var(--waline-active-color);
           }
         }
       }

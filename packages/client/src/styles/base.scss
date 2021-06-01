@@ -11,7 +11,6 @@
 
     background: transparent;
     color: var(--waline-text-color);
-    outline: none;
 
     font-weight: 400;
     font-size: 0.75em;
@@ -40,6 +39,19 @@
       background: var(--waline-disable-bgcolor);
       color: var(--waline-disable-color);
       cursor: not-allowed;
+    }
+
+    &.primary {
+      border-color: var(--waline-theme-color);
+      background: var(--waline-theme-color);
+      color: var(--waline-white);
+
+      &:hover,
+      &:active {
+        border-color: var(--waline-active-color);
+        background: var(--waline-active-color);
+        color: var(--waline-white);
+      }
     }
   }
 

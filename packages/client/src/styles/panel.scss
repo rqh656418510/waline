@@ -12,44 +12,18 @@
     top: -4px;
     right: -4px;
 
+    padding: 0;
+    border: none;
+    background: transparent;
+
     line-height: 1;
 
     cursor: pointer;
   }
 
-  .vlogin {
-    margin-top: 0.75em;
-  }
-
-  .vlogin-btn {
-    display: block;
-
-    width: var(--waline-avatar-size);
-    height: var(--waline-avatar-size);
-    border: 1px solid var(--waline-border-color);
-    border-radius: var(--waline-avatar-radius);
-
-    background: var(--waline-bgcolor);
-    color: var(--waline-text-color);
-    box-shadow: var(--waline-box-shadow);
-
-    font-size: 12px;
-    line-height: var(--waline-avatar-size);
-    text-align: center;
-
-    @media (max-width: 720px) {
-      width: var(--waline-mobile-avatar-size);
-      height: var(--waline-mobile-avatar-size);
-      line-height: var(--waline-mobile-avatar-size);
-    }
-
-    &:hover {
-      color: var(--waline-theme-color);
-    }
-  }
-
   .vlogin-info {
     max-width: 80px;
+    margin-top: 0.75em;
     text-align: center;
   }
 
@@ -59,6 +33,8 @@
     right: -10px;
 
     padding: 3px;
+    border: none;
+    background: transparent;
 
     line-height: 0;
 
@@ -72,7 +48,7 @@
     height: var(--waline-avatar-size);
     margin: 0 auto;
 
-    border: 1px solid var(--waline-border-color);
+    border: var(--waline-border);
     border-radius: var(--waline-avatar-radius);
 
     @media (max-width: 720px) {
@@ -95,7 +71,9 @@
   }
 
   .vpanel {
-    flex: 1;
+    position: relative;
+    width: 100%;
+    flex-shrink: 1;
 
     margin: 0.5em;
     border: var(--waline-border);
@@ -107,7 +85,7 @@
 
   .vheader {
     display: flex;
-    padding-left: 4px;
+    padding: 0 4px;
     border-bottom: 2px dashed var(--waline-border-color);
     border-top-left-radius: 0.75em;
     border-top-right-radius: 0.75em;
@@ -151,7 +129,7 @@
 
     label {
       min-width: 40px;
-      padding: 0.75em 0;
+      padding: 0.75em 0.5em;
 
       color: var(--waline-text-color);
 
@@ -215,7 +193,7 @@
     .vcontent {
       min-height: 1.25em;
       padding: 0.25em;
-      border: 1px solid var(--waline-border-color);
+      border: var(--waline-border);
       border-radius: 0.25em;
 
       > *:first-child {
@@ -231,6 +209,7 @@
   .vfooter {
     position: relative;
     display: flex;
+    flex-wrap: wrap;
     margin: 0.5em 0.75em;
   }
 
@@ -244,6 +223,9 @@
     width: 1.5em;
     height: 1.5em;
     border: none;
+
+    margin: 2px;
+    padding: 0;
 
     background: transparent;
 
@@ -264,10 +246,17 @@
     &.actived {
       fill: var(--waline-active-color);
     }
+  }
 
-    .upload {
-      width: 0;
-      height: 0;
+  #image-upload {
+    display: none;
+
+    &:focus + label {
+      fill: var(--waline-text-color);
+    }
+
+    &:focus-visible + label {
+      outline: -webkit-focus-ring-color auto 1px;
     }
   }
 

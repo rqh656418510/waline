@@ -4,11 +4,11 @@ title: Waline
 heroImage: /logo.png
 actions:
   - text: 💡 Get Started
-    link: /en/get-started.html
+    link: /en/guide/get-started.html
     type: primary
 
   - text: ℹ️ Intro
-    link: /en/intro.html
+    link: /en/advanced/intro.html
     type: secondary
 
 features:
@@ -16,7 +16,7 @@ features:
     details: Full Markdown support, with emoji, mathematical formulas and HTML embedding support
 
   - title: LightWeight
-    details: 53kb gzip Size
+    details: 53.3kb gzip Size
 
   - title: Improved Security
     details: Content verification, anti-irrigation, protection of sensitive data, etc.

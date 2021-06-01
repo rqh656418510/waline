@@ -1,7 +1,6 @@
-import { createApp, ref } from 'vue';
+import { createApp } from 'vue';
+import { useConfig } from './composables';
 import {
-  checkOptions,
-  getConfig,
   getEvent,
   injectDarkStyle,
   registerMathML,
@@ -9,11 +8,14 @@ import {
   updateVisitor,
 } from './utils';
 import { RecentComments } from './widget';
-import App from './App.vue';
+import Waline from './Waline.vue';
 
+import type { App, DeepReadonly } from 'vue';
 import type { WalineOptions } from './config';
+import type { Update } from './composables';
 import type { Config } from './utils';
 
+export type { Update as WalineUpdate } from './composables';
 export type { Locale as WalineLocale, WalineOptions } from './config';
 export type { Comment as WalineComment } from './typings';
 
@@ -21,7 +23,28 @@ import '@style';
 
 declare const VERSION: string;
 
-const domRender = (config: Config, signal: AbortSignal): void => {
+class Controller {
+  private controller;
+
+  constructor() {
+    this.controller = new AbortController();
+  }
+
+  get signal(): AbortSignal {
+    return this.controller.signal;
+  }
+
+  abort(): void {
+    this.controller.abort();
+  }
+
+  new(): void {
+    this.abort();
+    this.controller = new AbortController();
+  }
+}
+
+const domRender = (config: DeepReadonly<Config>, signal: AbortSignal): void => {
   const { path, serverURL, visitor } = config;
 
   // visitor count
@@ -31,19 +54,36 @@ const domRender = (config: Config, signal: AbortSignal): void => {
   updateCommentCount(serverURL, signal);
 };
 
+const getRoot = (el: string | HTMLElement | undefined): HTMLElement | null => {
+  if (!el) return null;
+  if (el instanceof HTMLElement) return el;
+
+  const root = document.querySelector<HTMLElement>(el);
+
+  return root || null;
+};
+
+export interface WalineErrorInstance {
+  errMsg: string;
+}
+
+const getErrorInstance = (errMsg: string): WalineErrorInstance => {
+  console.error(errMsg);
+
+  return { errMsg };
+};
+
 export interface WalineInstance {
-  update: (options: Partial<WalineOptions>) => void;
+  el: HTMLElement | null;
+  update: Update;
   destroy: () => void;
 }
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
-function Waline(options: WalineOptions): WalineInstance | void {
-  let prevOptions = options;
-  let controller = new AbortController();
-  const event = getEvent();
-  const config = ref(getConfig(options));
+function waline(options: WalineOptions): WalineInstance | WalineErrorInstance {
+  const { el, serverURL } = options;
 
-  if (!checkOptions(options)) return;
+  // check serverURL
+  if (!serverURL) return getErrorInstance("Option 'serverURL' is missing!");
 
   // darkmode support
   if (options.dark) injectDarkStyle(options.dark);
@@ -51,39 +91,66 @@ function Waline(options: WalineOptions): WalineInstance | void {
   // mathml
   window.addEventListener('load', registerMathML);
 
-  domRender(config.value, controller.signal);
+  const commentController = new Controller();
+  const counterController = new Controller();
+
+  const event = getEvent();
+  const { config, update } = useConfig(options);
+
+  domRender(config.value, counterController.signal);
+
+  // check el element
+  const root = getRoot(el);
+
+  if (el && !root) return getErrorInstance("Option 'el' is invalid!");
 
   // mount waline
-  const app = createApp(App, { signal: controller.signal })
-    .provide('config', config)
-    .provide('event', event)
-    .provide('version', VERSION);
+  let app: App;
 
-  app.mount(options.el || '#waline');
+  if (root) {
+    app = createApp(Waline, { signal: commentController.signal })
+      .provide('config', config)
+      .provide('event', event)
+      .provide('version', VERSION);
+
+    app.mount(root);
+  }
+
+  // store for update use
+  const state = {
+    options,
+    path: config.value.path,
+  };
 
   return {
-    update: (newOptions: Partial<WalineOptions> = {}): void => {
-      prevOptions = { ...prevOptions, ...newOptions };
+    el: root,
+    update: (newOptions): void => {
+      update(newOptions);
 
-      config.value = getConfig(prevOptions);
+      const { path } = config.value;
+
+      // comment should not rerender
+      if (state.path !== path) {
+        commentController.new();
+        state.path = path;
+        event.emit('render', commentController.signal);
+      }
 
       // abort previous requests and update controller
-      controller.abort();
-      controller = new AbortController();
+      counterController.new();
 
-      event.emit('render', controller.signal);
-      domRender(config.value, controller.signal);
+      domRender(config.value, counterController.signal);
     },
     destroy: (): void => {
-      app.unmount();
+      if (el) app.unmount();
     },
   };
 }
 
-Waline.Widget = {
+waline.Widget = {
   RecentComments,
 };
 
-Waline.version = VERSION;
+waline.version = VERSION;
 
-export default Waline;
+export default waline;

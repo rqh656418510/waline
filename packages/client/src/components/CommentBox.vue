@@ -1,49 +1,31 @@
 <template>
   <div class="vcomment">
-    <CloseIcon
-      v-if="replyId"
-      size="24"
-      class="vclose"
-      :title="locale.cancelReply"
-      role="button"
-      @click="onCancelReply"
-    />
+    <div v-if="config.login !== 'disable' && isLogin" class="vlogin-info">
+      <div class="vavatar">
+        <button class="vlogout-btn" :title="locale.logout" @click="onLogout">
+          <CloseIcon size="14" />
+        </button>
 
-    <div v-if="config.login !== 'disable'" class="vlogin">
-      <div v-if="userInfo?.token" class="vlogin-info">
-        <div class="vavatar">
-          <button class="vlogout-btn" :title="locale.logout" @click="onLogout">
-            <CloseIcon size="14" />
-          </button>
-
-          <img
-            :src="
-              userInfo.avatar ||
-              `${config.avatar.cdn}${userInfo.mailMd5}${config.avatar.param}`
-            "
-            alt="avatar"
-          />
-        </div>
-        <a
-          href="#"
-          class="vlogin-nick"
-          aria-label="Profile"
-          @click="onProfile"
-          v-text="userInfo.display_name"
+        <img
+          :src="
+            userInfo.avatar ||
+            `${config.avatar.cdn}${userInfo.mailMd5}${config.avatar.param}`
+          "
+          alt="avatar"
         />
       </div>
       <a
-        v-else
-        class="vlogin-btn"
-        role="button"
-        @click="onLogin"
-        v-text="locale.login"
+        href="#"
+        class="vlogin-nick"
+        aria-label="Profile"
+        @click="onProfile"
+        v-text="userInfo.display_name"
       />
     </div>
 
     <div class="vpanel">
       <div
-        v-if="(!userInfo || !userInfo.token) && config.login !== 'force'"
+        v-if="config.login !== 'force' && !isLogin"
         :class="['vheader', `vheader-${config.meta.length}`]"
       >
         <div v-for="kind in config.meta" class="vheader-item" :key="kind">
@@ -99,35 +81,28 @@
             class="vaction"
             :class="{ actived: showEmoji }"
             :title="locale.emoji"
-            :aria-label="locale.emoji"
             @click="showEmoji = !showEmoji"
           >
             <EmojiIcon />
           </button>
 
-          <label
-            for="image-upload"
-            class="vaction"
-            :title="locale.uploadImage"
-            :aria-label="locale.uploadImage"
-          >
-            <ImageIcon />
+          <input
+            ref="imageUploadRef"
+            class="upload"
+            id="image-upload"
+            type="file"
+            accept=".png,.jpg,.jpeg,.webp,.bmp,.gif"
+            @change="onChange"
+          />
 
-            <input
-              ref="imageUploadRef"
-              class="upload"
-              id="image-upload"
-              type="file"
-              accept=".png,.jpg,.jpeg,.webp,.bmp,.gif"
-              @change="onChange"
-            />
+          <label for="image-upload" class="vaction" :title="locale.uploadImage">
+            <ImageIcon />
           </label>
 
           <button
             class="vaction"
             :class="{ actived: showPreview }"
             :title="locale.preview"
-            :aria-label="locale.preview"
             @click="showPreview = !showPreview"
           >
             <PreviewIcon />
@@ -150,7 +125,14 @@
           </div>
 
           <button
+            v-if="config.login !== 'disable' && !isLogin"
             class="vbtn"
+            @click="onLogin"
+            v-text="locale.login"
+          />
+
+          <button
+            class="vbtn primary"
             title="Cmd|Ctrl + Enter"
             :disabled="isSubmitting"
             @click="submitComment"
@@ -169,7 +151,6 @@
                 v-for="key in config.items"
                 :key="key"
                 :title="key"
-                :aria-label="key"
                 @click="insert(`:${key}:`)"
               >
                 <img
@@ -203,11 +184,20 @@
         </div>
       </div>
     </div>
+
+    <button
+      v-if="replyId"
+      class="vclose"
+      :title="locale.cancelReply"
+      @click="$emit('cancel-reply')"
+    >
+      <CloseIcon size="24" />
+    </button>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, inject, reactive, ref, watch } from 'vue';
+import { computed, defineComponent, inject, ref, watch } from 'vue';
 import autosize from 'autosize';
 
 import {
@@ -218,20 +208,19 @@ import {
   PreviewIcon,
   LoadingIcon,
 } from './Icons';
-import { useUserInfo } from '../composables';
+import { useInputs, useUserInfo } from '../composables';
 import {
   getImagefromDataTransfer,
   parseMarkdown,
   getWordNumber,
   parseEmoji,
   postComment,
-  store,
 } from '../utils';
 
-import type { CommentData, ConfigRef } from '../typings';
+import type { DeepReadonly } from 'vue';
+import type { ConfigRef } from '../composables';
+import type { CommentData } from '../typings';
 import type { EmojiConfig } from '../utils';
-
-const infoStore = store('WALINE_USER_CACHE');
 
 export default defineComponent({
   name: 'CommentBox',
@@ -265,20 +254,14 @@ export default defineComponent({
   setup(props, { emit }) {
     const config = inject<ConfigRef>('config') as ConfigRef;
 
+    const { inputs, store } = useInputs();
     const { userInfo, setUserInfo } = useUserInfo();
-
-    const inputs = reactive({
-      nick: infoStore.get<string>('nick') || '',
-      mail: infoStore.get<string>('mail') || '',
-      link: infoStore.get<string>('link') || '',
-      editor: '',
-    });
 
     const inputRefs = ref<Record<string, HTMLInputElement>>({});
     const editorRef = ref<HTMLTextAreaElement | null>(null);
     const imageUploadRef = ref<HTMLInputElement | null>(null);
 
-    const emoji = ref<EmojiConfig>({ tabs: [], map: {} });
+    const emoji = ref<DeepReadonly<EmojiConfig>>({ tabs: [], map: {} });
     const emojiTabIndex = ref(0);
     const showEmoji = ref(false);
     const showPreview = ref(false);
@@ -293,6 +276,8 @@ export default defineComponent({
     const isSubmitting = ref(false);
 
     const locale = computed(() => config.value.locale);
+
+    const isLogin = computed(() => Boolean(userInfo.value?.token));
 
     const insert = (content: string): void => {
       const textArea = editorRef.value as HTMLTextAreaElement;
@@ -315,12 +300,6 @@ export default defineComponent({
 
       // Shortcut key
       if ((event.ctrlKey || event.metaKey) && key === 'Enter') submitComment();
-
-      // tab key
-      if (key === 'Tab') {
-        event.preventDefault();
-        insert('    ');
-      }
     };
 
     const uploadImage = (file: File): Promise<void> => {
@@ -442,7 +421,7 @@ export default defineComponent({
         (resp) => {
           isSubmitting.value = false;
 
-          infoStore.update({
+          store.update({
             nick: comment.nick,
             link: comment.link,
             mail: comment.mail,
@@ -597,6 +576,7 @@ export default defineComponent({
       onProfile,
       submitComment,
 
+      isLogin,
       userInfo,
       isSubmitting,
 
