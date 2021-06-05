@@ -1,3 +1,14 @@
+# (2021-06-05)
+
+### Version
+
+- 2.1.0
+
+### Features
+
+- update deps
+- update repo links
+
 # (2021-05-19)
 
 ### Version
