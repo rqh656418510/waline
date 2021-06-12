@@ -13,7 +13,7 @@ npm install hexo-waline-next --save
 
 ## Feature
 
-- upload image to qiniu
+- upload image to [qiniu](https://www.qiniu.com)
 - set custom gravatar cdn url
 
 ## Configure
@@ -40,7 +40,7 @@ waline:
   avatarCDN: # Set custom gravatar cdn url
   copyright: true # Display the footer copyright information
   qiniuDomain: # The custom domain for qiniu, e.g https://qiniu.example.cn
-  qiniuTokenUrl: # The url to get the qiniu token, e.g https://api.example.cn/qiniu/sdk/token
+  qiniuTokenUrl: # The url to get qiniu token, e.g https://api.example.cn/qiniu/sdk/token
 ```
 
 ## Compatibility
