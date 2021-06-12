@@ -1,8 +1,20 @@
+# (2021-06-13)
+
+### Version
+
+- 2.1.2
+
+### Features
+
+- optimize upload image to [qiniu](https://www.qiniu.com)
+
 # (2021-06-12)
 
 ### Version
 
 - 2.1.1
+
+### Features
 
 - support upload image to [qiniu](https://www.qiniu.com)
 
@@ -14,8 +26,6 @@ waline:
 ```
 
 # (2021-06-05)
-
-### Features
 
 ### Version
 
