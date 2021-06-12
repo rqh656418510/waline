@@ -6,10 +6,15 @@
   path: url_for(page.path) | replace(r/index\.html$/, ''),
   avatarCDN: config.waline.avatarCDN | default('https://cdn.v2ex.com/gravatar/', true),
   dark: config.waline.dark | default('auto', true),
-  copyright: config.waline.copyright
+  copyright: config.waline.copyright,
+  qiniuDomain: config.waline.qiniuDomain,
+  qiniuTokenUrl: config.waline.qiniuTokenUrl
 }) }}
 <script>
 document.addEventListener('page:loaded', () => {
+  if(CONFIG.waline.qiniuDomain && CONFIG.waline.qiniuTokenUrl){
+    CONFIG.waline.uploadImage = qiniuUploadImage;
+  }
   NexT.utils.loadComments(CONFIG.waline.el).then(() =>
     NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
   ).then(() => {

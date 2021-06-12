@@ -43,6 +43,7 @@ hexo.extend.filter.register('theme_inject', (injects) => {
     { cache: true }
   );
 
+  injects.bodyEnd.raw('qiniu', utils.getFileContent('plugins/qiniu.njk'));
   injects.bodyEnd.raw('waline', utils.getFileContent('waline.njk'));
 
   injects.head.raw(

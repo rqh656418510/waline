@@ -1,4 +1,21 @@
+# (2021-06-12)
+
+### Version
+
+- 2.1.1
+
+- support upload image to qiniu
+
+``` yml
+waline:
+  enable: true
+  qiniuDomain: https://qiniu.example.cn                       # The custom domain for qiniu
+  qiniuTokenUrl: https://api.example.cn/qiniu/sdk/token       # The url to get the qiniu token
+```
+
 # (2021-06-05)
+
+### Features
 
 ### Version
 

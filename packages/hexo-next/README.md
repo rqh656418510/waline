@@ -11,6 +11,11 @@ Waline comment system for NexT. Waline is a simple, safe comment system inspired
 npm install hexo-waline-next --save
 ```
 
+## Feature
+
+- upload image to qiniu
+- set custom gravatar cdn url
+
 ## Configure
 
 Set the value `enable` to `true`, add `serverURL`, and edit other configurations in `waline` section in the config file as following. You can config those in both **hexo** or **theme** `_config.yml`:
@@ -31,9 +36,11 @@ waline:
   visitor: false # Article reading statistic
   comment_count: true # If false, comment count will only be displayed in post page, not in home page
   requiredMeta: [] # Set required fields: [nick] | [nick, mail]
-  libUrl: # Set custom library cdn url
+  libUrl: # Set custom waline cdn url
   avatarCDN: # Set custom gravatar cdn url
   copyright: true # Display the footer copyright information
+  qiniuDomain: # The custom domain for qiniu, e.g https://qiniu.example.cn
+  qiniuTokenUrl: # The url to get the qiniu token, e.g https://api.example.cn/qiniu/sdk/token
 ```
 
 ## Compatibility
