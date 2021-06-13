@@ -1,3 +1,13 @@
+# (2021-06-14)
+
+### Version
+
+- 2.1.3
+
+### Features
+
+- update docs
+
 # (2021-06-13)
 
 ### Version
@@ -6,7 +16,7 @@
 
 ### Features
 
-- optimize upload image to [qiniu](https://www.qiniu.com)
+- optimize upload pictures to [qiniu](https://www.qiniu.com)
 
 # (2021-06-12)
 
@@ -16,7 +26,7 @@
 
 ### Features
 
-- support upload image to [qiniu](https://www.qiniu.com)
+- support upload pictures to [qiniu](https://www.qiniu.com)
 
 ``` yml
 waline:

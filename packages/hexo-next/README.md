@@ -14,8 +14,8 @@ npm install hexo-waline-next --save
 ## Feature
 
 - dark mode
-- upload image to [qiniu](https://www.qiniu.com)
 - custom gravatar cdn url
+- upload pictures to [qiniu](https://www.qiniu.com)
 
 ## Configure
 
@@ -43,6 +43,12 @@ waline:
   qiniuDomain: # The custom domain for qiniu, e.g https://qiniu.example.cn
   qiniuTokenUrl: # The url to get qiniu token, e.g https://api.example.cn/qiniu/sdk/token
 ```
+
+## Blog
+
+- [NexT how to add dark mode](https://www.techgrow.cn/posts/abf4aee1.html)
+- [NexT and Waline how to add dark mode](https://www.techgrow.cn/posts/ae18fb85.html#启用暗黑模式)
+- [Waline how to upload pictures to qiniu](https://www.techgrow.cn/posts/ae18fb85.html#上传评论图片)
 
 ## Compatibility
 
