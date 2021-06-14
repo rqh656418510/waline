@@ -44,11 +44,21 @@ waline:
   qiniuTokenUrl: # The url to get qiniu token, e.g https://api.example.cn/qiniu/sdk/token
 ```
 
-## Blog
+## Token API Return Data Description
 
-- [NexT how to add dark mode](https://www.techgrow.cn/posts/abf4aee1.html)
-- [NexT and Waline how to add dark mode](https://www.techgrow.cn/posts/ae18fb85.html#启用暗黑模式)
-- [Waline how to upload pictures to qiniu](https://www.techgrow.cn/posts/ae18fb85.html#上传评论图片)
+``` json
+{
+    "data": "tdvdhnpSs2JFt8U9-c9hL74ddWtEj",
+    "code": 200,
+    "msg": "success"
+}
+```
+
+| parameter name | type   | value                         | explain                                                                                                                                |
+| -------------- | ------ | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| code           | Number | 200                           | status code, 200 returned successfully, 400 returned illegal request source, 429 returned too many requests, 500 returned system error |
+| data           | String | tdvdhnpSs2JFt8U9-c9hL74ddWtEj | the value of token                                                                                                                     |
+| msg            | String | success                       | message                                                                                                                                |
 
 ## Compatibility
 
@@ -56,3 +66,9 @@ waline:
 | -------------- | ------------ |
 | 1.0.8          | <= 8.3       |
 | 2.0.0+         | >= 8.4       |
+
+## Blog
+
+- [NexT how to add dark mode](https://www.techgrow.cn/posts/abf4aee1.html)
+- [NexT and Waline how to add dark mode](https://www.techgrow.cn/posts/ae18fb85.html#启用暗黑模式)
+- [Waline how to upload pictures to qiniu](https://www.techgrow.cn/posts/ae18fb85.html#上传评论图片)

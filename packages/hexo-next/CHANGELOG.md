@@ -2,6 +2,16 @@
 
 ### Version
 
+- 2.1.4
+
+### Features
+
+- optimize upload pictures to [qiniu](https://www.qiniu.com)
+
+# (2021-06-14)
+
+### Version
+
 - 2.1.3
 
 ### Features
