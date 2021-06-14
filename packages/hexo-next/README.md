@@ -49,16 +49,15 @@ waline:
 ``` json
 {
     "data": "tdvdhnpSs2JFt8U9-c9hL74ddWtEj",
-    "code": 200,
     "msg": "success"
 }
 ```
 
-| parameter name | type   | value                         | explain                                                                                                                                |
-| -------------- | ------ | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| code           | Number | 200                           | status code, 200 returned successfully, 400 returned illegal request source, 429 returned too many requests, 500 returned system error |
-| data           | String | tdvdhnpSs2JFt8U9-c9hL74ddWtEj | the value of token                                                                                                                     |
-| msg            | String | success                       | message                                                                                                                                |
+| parameter name | type   | value                         | explain                                                                                                                                              |
+| -------------- | ------ | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| status         | Number | 200                           | http status code, 200 returned successfully, 403 returned illegal request source, 429 returned too many requests, 500 returned system internal error |
+| data           | String | tdvdhnpSs2JFt8U9-c9hL74ddWtEj | the value of token                                                                                                                                   |
+| msg            | String | success                       | message                                                                                                                                              |
 
 ## Compatibility
 
