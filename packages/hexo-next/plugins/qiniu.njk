@@ -4,7 +4,7 @@
     var qiniu_domain = "{{ config.waline.qiniuDomain }}";
     var qiniu_token_url = "{{ config.waline.qiniuTokenUrl }}";
 
-    // date format
+   // date format
    Date.prototype.format = function(fmt) {
      var o = {
        "M+": this.getMonth() + 1,
@@ -71,16 +71,16 @@
        if (responseStatus === 200) {
          return responseJson.data;
        } else if (responseStatus === 403) {
-         alert(responseJson.msg || "图片上传失败，非法请求来源!");
+         alert(responseJson.msg || "图片上传失败，非法请求来源！");
        } else if (responseStatus === 429) {
-         alert(responseJson.msg || "图片上传太频繁，请稍后再试!");
+         alert(responseJson.msg || "图片上传太频繁，请稍后再试！");
        } else if (responseStatus === 500) {
-         alert(responseJson.msg || "图片上传失败，系统内部出错!");
+         alert(responseJson.msg || "图片上传失败，系统内部出错！");
        } else {
-         alert("图片上载失败，发生未知错误!");
+         alert("图片上传失败，发生未知错误！");
        }
      } catch (err) {
-       alert("图片上载失败，发生未知错误!");
+       alert("图片上传失败，发生未知错误！");
      }
      return null;
    }
