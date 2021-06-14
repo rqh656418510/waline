@@ -22,7 +22,10 @@ const {
   MARKDOWN_EMOJI,
   MARKDOWN_SUB,
   MARKDOWN_SUP,
-  MARKDOWN_TEX,
+  // mathjax will be the default option for tex
+  MARKDOWN_TEX = 'mathjax',
+  MARKDOWN_MATHJAX = '{}',
+  MARKDOWN_KATEX = '{}',
 
   MAIL_SUBJECT,
   MAIL_TEMPLATE,
@@ -70,7 +73,9 @@ const markdown = {
     emoji: !isFalse(MARKDOWN_EMOJI),
     sub: !isFalse(MARKDOWN_SUB),
     sup: !isFalse(MARKDOWN_SUP),
-    tex: !isFalse(MARKDOWN_TEX),
+    tex: isFalse(MARKDOWN_TEX) ? false : MARKDOWN_TEX,
+    mathjax: JSON.parse(MARKDOWN_MATHJAX),
+    katex: JSON.parse(MARKDOWN_KATEX),
   },
 };
 

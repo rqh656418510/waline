@@ -3,6 +3,7 @@ const emojiPlugin = require('markdown-it-emoji');
 const subPlugin = require('markdown-it-sub');
 const supPlugin = require('markdown-it-sup');
 const { katexPlugin } = require('./katex');
+const { mathjaxPlugin } = require('./mathjax');
 const { resolveHighlighter } = require('./highlight');
 const { sanitize } = require('./xss');
 
@@ -29,7 +30,7 @@ const getMarkdownParser = () => {
     html: true,
   });
 
-  const { emoji, tex, sub, sup } = plugin;
+  const { emoji, tex, mathjax, katex, sub, sup } = plugin;
 
   // parse emoji
   if (emoji !== false) {
@@ -47,11 +48,13 @@ const getMarkdownParser = () => {
   }
 
   // parse tex
-  if (tex !== false) {
+  if (tex === 'katex') {
     markdownIt.use(katexPlugin, {
-      ...(typeof tex === 'object' ? tex : {}),
+      ...katex,
       output: 'mathml',
     });
+  } else if (tex !== false) {
+    markdownIt.use(mathjaxPlugin, mathjax);
   }
 
   return (content) => sanitize(markdownIt.render(content));
