@@ -44,7 +44,7 @@ waline:
   qiniuTokenUrl: # The url to get qiniu token, e.g https://api.example.cn/qiniu/sdk/token
 ```
 
-## Token API Return Data Description
+## Qiniu Token API Return Data Description
 
 ``` json
 {
