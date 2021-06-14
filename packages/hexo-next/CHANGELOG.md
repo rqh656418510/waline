@@ -44,8 +44,8 @@
 ``` yml
 waline:
   enable: true
-  qiniuDomain: https://qiniu.example.cn                       # The custom domain for qiniu
-  qiniuTokenUrl: https://api.example.cn/qiniu/sdk/token       # The url to get qiniu token
+  qiniuDomain: https://qiniu.example.cn                             # The custom domain for qiniu
+  qiniuTokenUrl: https://api.example.cn/qiniu/sdk/token/upload      # The api to get qiniu upload token
 ```
 
 # (2021-06-05)
