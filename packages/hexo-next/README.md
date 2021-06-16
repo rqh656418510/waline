@@ -55,8 +55,8 @@ waline:
 
 | parameter name | type   | value                         | explain                                                                                                                                              |
 | -------------- | ------ | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| status         | Number | 200                           | http status code, 200 returned successfully, 403 returned illegal request source, 429 returned too many requests, 500 returned system internal error |
-| data           | String | tdvdhnpSs2JFt8U9-c9hL74ddWtEj | the value of token                                                                                                                                   |
+| status code    | Number | 200                           | http status code, 200 returned successfully, 403 returned illegal request source, 429 returned too many requests, 500 returned system internal error |
+| data           | String | tdvdhnpSs2JFt8U9-c9hL74ddWtEj | the value of upload token                                                                                                                            |
 | msg            | String | success                       | message                                                                                                                                              |
 
 ## Compatibility
