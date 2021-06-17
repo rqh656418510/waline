@@ -38,7 +38,7 @@
     "@types/marked": "^2.0.2",
     "autosize": "^4.0.2",
     "hanabi": "^0.4.0",
-    "marked": "^2.0.3",
+    "marked": "^2.1.1",
     "vue": "^3.0.0"
   }
 }
