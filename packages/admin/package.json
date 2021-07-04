@@ -45,12 +45,12 @@
     "@rematch/core": "^2.0.1",
     "@svgr/webpack": "^5.5.0",
     "classnames": "^2.3.1",
-    "i18next": "^20.3.1",
-    "i18next-browser-languagedetector": "^6.1.1",
+    "i18next": "^20.3.2",
+    "i18next-browser-languagedetector": "^6.1.2",
     "md5": "^2.3.0",
     "react": "^17.0.2",
-    "react-dom": "^16.14.0",
-    "react-i18next": "^11.10.0",
+    "react-dom": "^17.0.2",
+    "react-i18next": "^11.11.0",
     "react-redux": "^7.2.4"
   }
 }
