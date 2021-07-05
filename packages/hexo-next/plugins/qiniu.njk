@@ -82,7 +82,7 @@
         } else if (responseStatus === 500) {
           alert(responseJson.msg || "图片上传失败，无法获取UploadToken，系统内部出错！");
         } else {
-          alert("图片上传失败，无法获取UploadToken，未知错误！");
+          alert("图片上传失败，无法获取UploadToken，未知Http响应状态码！");
         }
       } catch (err) {
         if (qiniu_debug) {
