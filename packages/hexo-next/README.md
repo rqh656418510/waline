@@ -40,6 +40,7 @@ waline:
   libUrl: # Set custom waline cdn url
   avatarCDN: # Set custom gravatar cdn url
   copyright: true # Display the footer copyright information
+  qiniuDebug: false # print the error message of the picture uploaded by qiniu
   qiniuDomain: # The custom domain for qiniu, e.g https://qiniu.example.cn
   qiniuTokenUrl: # The api to get qiniu upload token, e.g https://api.example.cn/qiniu/sdk/token/upload
 ```

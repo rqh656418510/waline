@@ -1,3 +1,18 @@
+# (2021-07-04)
+
+### Version
+
+- 2.1.8
+
+### Features
+
+- add options to print the error message of the pictures uploaded by [qiniu](https://www.qiniu.com)
+
+``` yml
+waline:
+  qiniuDebug: false     # print the error message of the picture uploaded by qiniu
+```
+
 # (2021-06-14)
 
 ### Version
