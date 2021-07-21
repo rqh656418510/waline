@@ -1,3 +1,18 @@
+# (2021-07-21)
+
+### Version
+
+- 2.2.1
+
+### Features
+
+- add options to force waline client to login
+
+``` yml
+waline:
+  login: 'force'        # Force waline client to login, available value: force
+```
+
 # (2021-07-04)
 
 ### Version
@@ -12,7 +27,7 @@
 
 ``` yml
 waline:
-  qiniuDebug: false     # print the error message of the picture uploaded by qiniu
+  qiniuDebug: false     # Print the error message of the picture uploaded by qiniu
 ```
 
 # (2021-06-14)

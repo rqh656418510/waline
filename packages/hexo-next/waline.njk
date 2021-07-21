@@ -9,7 +9,8 @@
   copyright: config.waline.copyright,
   qiniuDebug: config.waline.qiniuDebug,
   qiniuDomain: config.waline.qiniuDomain,
-  qiniuTokenUrl: config.waline.qiniuTokenUrl
+  qiniuTokenUrl: config.waline.qiniuTokenUrl,
+  login: config.waline.login | default('auto', '')
 }) }}
 <script>
 document.addEventListener('page:loaded', () => {

@@ -16,6 +16,7 @@ npm install hexo-waline-next --save
 - dark mode
 - custom gravatar cdn url
 - upload pictures to [qiniu](https://www.qiniu.com)
+- force waline client to login
 
 ## Configure
 
@@ -43,6 +44,7 @@ waline:
   qiniuDebug: false # print the error message of the picture uploaded by qiniu
   qiniuDomain: # The custom domain for qiniu, e.g https://qiniu.example.cn
   qiniuTokenUrl: # The api to get qiniu upload token, e.g https://api.example.cn/qiniu/sdk/token/upload
+  login: '' # Force waline client to login, available value: force
 ```
 
 ## Qiniu Upload Token API Return Data Description
