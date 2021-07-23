@@ -1,3 +1,13 @@
+# (2021-07-23)
+
+### Version
+
+- 2.2.2
+
+### Features
+
+- update package.json
+
 # (2021-07-21)
 
 ### Version
