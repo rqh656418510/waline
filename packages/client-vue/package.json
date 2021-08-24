@@ -35,7 +35,7 @@
   },
   "devDependencies": {
     "@types/autosize": "^3.0.7",
-    "@types/marked": "^2.0.2",
+    "@types/marked": "^3.0.0",
     "autosize": "^4.0.2",
     "hanabi": "^0.4.0",
     "marked": "^2.0.3",
