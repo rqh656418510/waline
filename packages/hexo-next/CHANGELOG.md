@@ -4,14 +4,9 @@
 
 - 2.2.4
 
-### Features
+### Bug Fixes
 
-- add options to disable upload pictures by client
-
-``` yml
-waline:
-  allowUploadImage: true        # Allow upload picture
-```
+- fix invalid meta setting
 
 # (2021-08-24)
 

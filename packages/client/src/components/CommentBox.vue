@@ -25,7 +25,7 @@
 
     <div class="vpanel">
       <div
-        v-if="config.login !== 'force' && !isLogin"
+        v-if="config.login !== 'force' && config.meta.length && !isLogin"
         :class="['vheader', `vheader-${config.meta.length}`]"
       >
         <div v-for="kind in config.meta" class="vheader-item" :key="kind">
@@ -123,7 +123,7 @@
               &nbsp;/&nbsp;
               <span
                 :class="{ illegal: !isWordNumberLegal }"
-                v-text="textLimit"
+                v-text="wordLimit"
               />
             </span>
 
