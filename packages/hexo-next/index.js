@@ -43,6 +43,7 @@ hexo.extend.filter.register('theme_inject', (injects) => {
     { cache: true }
   );
 
+  injects.bodyEnd.raw('qiniu', utils.getFileContent('plugins/qiniu.njk'));
   injects.bodyEnd.raw('waline', utils.getFileContent('waline.njk'));
 
   injects.head.raw(
@@ -63,7 +64,7 @@ hexo.extend.filter.register('theme_inject', (injects) => {
     `
   {% if post.comments and (is_post() or config.waline.comment_count) %}
   <span class="post-meta-item">
-    ${iconText('far fa-comment', 'waline')}
+    ${iconText('far fa-comment', 'waline', '评论数')}
     <a title="waline" href="{{ url_for(post.path) }}#waline-comments" itemprop="discussionUrl">
       <span class="post-comments-count waline-comment-count" id="{{ url_for(post.path) }}" data-xid="{{ url_for(post.path) }}" itemprop="commentCount"></span>
     </a>
