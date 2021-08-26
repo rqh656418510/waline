@@ -1,3 +1,19 @@
+# (2021-08-26)
+
+### Version
+
+- 2.2.5
+
+### Features
+
+- update options to use libravatar
+- add options to disable upload pictures by client
+
+``` yml
+waline:
+  allowUploadImage: true        # Allow upload picture
+```
+
 # (2021-08-25)
 
 ### Version
@@ -40,7 +56,7 @@
 
 ``` yml
 waline:
-  login: 'force'        # Force waline client to login, available value: force
+  login: 'force'        # Force waline client to login, available value: enable, disable, force
 ```
 
 # (2021-07-04)

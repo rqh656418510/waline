@@ -5,7 +5,7 @@ waline:
   serverURL: https://waline.vercel.app # Waline server address url
   placeholder: Just go go # Comment box placeholder
   dark: auto # Dark mode
-  avatar: mm # Gravatar style
+  avatar: robohash # Avatar style
   pageSize: 10 # Pagination size
   #lang: # Language, available values: en, zh-cn
   # Warning: Do not enable both `waline.visitor` and `leancloud_visitors`.
@@ -14,3 +14,4 @@ waline:
   requiredMeta: [] # Set required fields: [nick] | [nick, mail]
   copyright: true # Display the footer copyright information
   login: '' # Force waline client to login, available value: force
+  allowUploadImage: true # Allow upload picture
