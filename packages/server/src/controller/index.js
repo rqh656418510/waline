@@ -12,6 +12,12 @@ module.exports = class extends think.Controller {
       <title>Waline Example</title>
     </head>
     <body>
+      <script>
+        var serverURL = location.protocol + '//' + location.host + location.pathname.replace(/\\/+$/, '') + '/ui';
+        window.location.replace(serverURL);
+      </script>
+
+      <!--
       <div id="waline" style="max-width: 800px;margin: 0 auto;"></div> <script src="https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js"></script>
       <script>
         console.log(
@@ -25,6 +31,8 @@ module.exports = class extends think.Controller {
           serverURL: location.protocol + '//' + location.host + location.pathname.replace(/\\/+$/, '')
         });
       </script>
+      -->
+
     </body>
     </html>`;
   }
