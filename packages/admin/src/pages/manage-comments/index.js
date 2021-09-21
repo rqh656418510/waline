@@ -151,6 +151,23 @@ export default function () {
         },
       },
       {
+        key: 'sticky',
+        show: comment && !comment.rid && comment.status === 'approved',
+        name: comment && comment.sticky ? t('disable sticky') : t('sticky'),
+        async action(e) {
+          e.preventDefault();
+
+          const sticky = !comment.sticky;
+          list.data.forEach((cmt) => {
+            if (cmt.objectId === comment.objectId) {
+              cmt.sticky = sticky;
+            }
+          });
+          await updateComment(comment.objectId, { sticky });
+          setList({ ...list });
+        },
+      },
+      {
         key: 'edit',
         show: comment,
         name: t('edit'),
@@ -380,6 +397,7 @@ export default function () {
                             objectId,
                             nick,
                             mail,
+                            avatar,
                             link,
                             comment,
                             ip,
@@ -387,6 +405,7 @@ export default function () {
                             status,
                             rid,
                             pid,
+                            sticky,
                             insertedAt,
                           },
                           idx
@@ -508,7 +527,7 @@ export default function () {
                                 <div className="comment-avatar">
                                   <img
                                     className="avatar"
-                                    src={buildAvatar(mail)}
+                                    src={buildAvatar(mail, avatar)}
                                     alt={nick}
                                     width="40"
                                     height="40"
@@ -608,6 +627,7 @@ export default function () {
                                     status,
                                     rid,
                                     pid,
+                                    sticky,
                                   }).map(({ key, disable, name, action }) =>
                                     disable ? (
                                       <span className="weak" key={key}>

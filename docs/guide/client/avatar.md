@@ -1,5 +1,11 @@
 # 头像配置
 
+::: warning 已过时
+
+建议配合最新版本的服务端，通过服务端的 `AVATAR_PROXY` 配置。
+
+:::
+
 Waline 目前使用 [Libravatar][1] 获取评论列表头像。
 
 Libravatar 是自由、开放原始码的头像服务，支持联邦托管并与 [Gravatar][2] 兼容。

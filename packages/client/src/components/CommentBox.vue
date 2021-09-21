@@ -237,9 +237,9 @@ import {
 
 import type { DeepReadonly } from 'vue';
 import type { ConfigRef } from '../composables';
+import type { UploadImage } from '../config';
 import type { CommentData } from '../typings';
 import type { EmojiConfig } from '../utils';
-import { UploadImage } from '../config';
 
 export default defineComponent({
   name: 'CommentBox',
@@ -530,7 +530,7 @@ export default defineComponent({
       const receiver = ({ data }: any): void => {
         if (!data || data.type !== 'profile') return;
 
-        setUserInfo({ ...userInfo.value, ...data });
+        setUserInfo(Object.assign({}, userInfo.value, data));
         [localStorage, sessionStorage]
           .filter((store) => store.getItem('WALINE_USER'))
           .forEach((store) =>
