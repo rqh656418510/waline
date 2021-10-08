@@ -164,6 +164,7 @@
                 @click="insert(`:${key}:`)"
               >
                 <img
+                  v-if="showEmoji"
                   class="vemoji"
                   :src="emoji.map[key]"
                   :alt="key"
@@ -402,7 +403,7 @@ export default defineComponent({
         // check mail
         if (
           (requiredMeta.indexOf('mail') > -1 || comment.mail) &&
-          !/^(\w)+(\.\w+)*@(\w)+((\.\w{2,}){1,3})$/.exec(comment.mail)
+          !/^(\w)+([._-]\w+)*@(\w)+((\.\w{2,}){1,3})$/.exec(comment.mail)
         ) {
           inputRefs.value.mail?.focus();
           return alert(locale.value.mailError);
@@ -542,6 +543,14 @@ export default defineComponent({
       window.addEventListener('message', receiver);
     };
 
+    const popupHandler = (event: MouseEvent): void => {
+      if (
+        !(emojiButtonRef.value as HTMLElement).contains(event.target as Node) &&
+        !(emojiPopupRef.value as HTMLElement).contains(event.target as Node)
+      )
+        showEmoji.value = false;
+    };
+
     // watch editor
     watch(
       () => inputs.editor,
@@ -593,14 +602,6 @@ export default defineComponent({
       },
       { immediate: true }
     );
-
-    const popupHandler = (event: MouseEvent): void => {
-      if (
-        !(emojiButtonRef.value as HTMLElement).contains(event.target as Node) &&
-        !(emojiPopupRef.value as HTMLElement).contains(event.target as Node)
-      )
-        showEmoji.value = false;
-    };
 
     onMounted(() => {
       document.body.addEventListener('click', popupHandler);
