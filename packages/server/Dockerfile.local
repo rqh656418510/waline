@@ -8,8 +8,8 @@ RUN set -eux; \
         npm install --production --silent @waline/vercel
 
 # use local source code
-RUN rm -rf /app/node_modules/@waline/vercel/src/*
-COPY ./src/ /app/node_modules/@waline/vercel/src
+RUN rm -rf /app/node_modules/@waline/vercel/*
+COPY ./* /app/node_modules/@waline/vercel/
 
 FROM node:lts-buster-slim
 WORKDIR /app
