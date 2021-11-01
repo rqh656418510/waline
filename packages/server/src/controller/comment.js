@@ -26,19 +26,18 @@ async function formatCmt(
     comment.type = user.type;
   }
 
-  comment.mail = helper.md5(
-    comment.mail ? comment.mail.toLowerCase() : comment.mail
-  );
-
   const avatarUrl =
     user && user.avatar
       ? user.avatar
-      : `https://seccdn.libravatar.org/avatar/${comment.mail}`;
-
+      : await think.service('avatar').stringify(comment);
   comment.avatar =
     avatarProxy && !avatarUrl.includes(avatarProxy)
       ? avatarProxy + '?url=' + encodeURIComponent(avatarUrl)
       : avatarUrl;
+
+  comment.mail = helper.md5(
+    comment.mail ? comment.mail.toLowerCase() : comment.mail
+  );
 
   return comment;
 }
@@ -71,6 +70,7 @@ module.exports = class extends BaseRest {
               'link',
               'mail',
               'nick',
+              'url',
               'pid',
               'rid',
               'ua',
@@ -257,7 +257,7 @@ module.exports = class extends BaseRest {
     if (pid) {
       data.comment = data.comment.replace(
         '<p>',
-        `<p><a class="at" href="#${pid}">@${at}</a> , `
+        `<p><a class="at" href="#${pid}">@${at}</a>: `
       );
     }
 

@@ -29,7 +29,15 @@
         :class="['vheader', `vheader-${config.meta.length}`]"
       >
         <div v-for="kind in config.meta" class="vheader-item" :key="kind">
-          <label :for="kind" v-text="locale[kind]" />
+          <label
+            :for="kind"
+            v-text="
+              locale[kind] +
+              (config.requiredMeta.includes(kind) || !config.requiredMeta.length
+                ? ''
+                : `(${locale.optional})`)
+            "
+          />
           <input
             :ref="
               (element) => {
@@ -138,6 +146,7 @@
           />
 
           <button
+            v-if="config.login !== 'force' || isLogin"
             class="vbtn primary"
             title="Cmd|Ctrl + Enter"
             :disabled="isSubmitting"
@@ -415,7 +424,7 @@ export default defineComponent({
           return;
         }
 
-        comment.nick = comment.nick || 'Anonymous';
+        comment.nick = locale.value.anonymous;
       }
 
       if (!isWordNumberLegal.value)
@@ -441,8 +450,8 @@ export default defineComponent({
         lang,
         token: userInfo.value?.token,
         comment,
-      }).then(
-        (resp) => {
+      })
+        .then((resp) => {
           isSubmitting.value = false;
 
           store.update({
@@ -460,11 +469,12 @@ export default defineComponent({
           previewText.value = '';
 
           if (props.replyId) emit('cancel-reply');
-        },
-        () => {
+        })
+        .catch((err: TypeError) => {
           isSubmitting.value = false;
-        }
-      );
+
+          alert(err.message);
+        });
     };
 
     const onLogin = (event: Event): void => {
@@ -504,7 +514,7 @@ export default defineComponent({
     };
 
     const onLogout = (): void => {
-      setUserInfo(null);
+      setUserInfo({});
       localStorage.setItem('WALINE_USER', 'null');
       sessionStorage.setItem('WALINE_USER', 'null');
     };
@@ -555,10 +565,15 @@ export default defineComponent({
     watch(
       () => inputs.editor,
       (value) => {
-        const { highlight } = config.value;
+        const { highlight, previewMath } = config.value;
 
         content.value = value;
-        previewText.value = parseMarkdown(value, highlight, emoji.value.map);
+        previewText.value = parseMarkdown(
+          value,
+          highlight,
+          emoji.value.map,
+          previewMath
+        );
         wordNumber.value = getWordNumber(value);
 
         if (editorRef.value)
