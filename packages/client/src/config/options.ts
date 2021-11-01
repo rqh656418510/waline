@@ -55,7 +55,15 @@ export type Meta = 'nick' | 'mail' | 'link';
 
 export type UploadImage = (image: File) => Promise<string>;
 
-export type PreviewMath = (blockMode: boolean, tex: string) => string;
+export type Highlighter =
+  | ((code: string, lang: string) => string)
+  | ((
+      code: string,
+      lang: string,
+      callback?: (error: unknown | undefined, code?: string) => void
+    ) => void);
+
+export type TexRenderer = (blockMode: boolean, tex: string) => string;
 
 export interface DeprecatedValineOptions {
   /**
@@ -173,6 +181,15 @@ export interface DeprecatedValineOptions {
    */
 
   emojiMaps?: EmojiMaps;
+
+  /**
+   * @deprecated Use `tex` instead
+   *
+   * 自定义 Tex 处理方法，用于预览。
+   *
+   * Custom math formula parse callback for preview.
+   */
+  previewMath?: TexRenderer | false;
 
   /**
    * @deprecated Use `login` instead, will be dropped in V2
@@ -342,11 +359,9 @@ export interface WalineOptions extends DeprecatedValineOptions {
    * 代码高亮
    *
    * Code highlighting
-   *
-   * @default true
    */
 
-  highlight?: boolean;
+  highlight?: Highlighter | false;
 
   /**
    * 设置表情包
@@ -374,7 +389,7 @@ export interface WalineOptions extends DeprecatedValineOptions {
    *
    * Custom math formula parse callback for preview.
    */
-  previewMath?: PreviewMath | false;
+  tex?: TexRenderer | false;
 
   /**
    *

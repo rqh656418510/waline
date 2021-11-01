@@ -424,7 +424,7 @@ export default defineComponent({
           return;
         }
 
-        comment.nick = locale.value.anonymous;
+        if (!comment.nick) comment.nick = locale.value.anonymous;
       }
 
       if (!isWordNumberLegal.value)
@@ -565,14 +565,14 @@ export default defineComponent({
     watch(
       () => inputs.editor,
       (value) => {
-        const { highlight, previewMath } = config.value;
+        const { highlight, tex } = config.value;
 
         content.value = value;
         previewText.value = parseMarkdown(
           value,
           highlight,
           emoji.value.map,
-          previewMath
+          tex
         );
         wordNumber.value = getWordNumber(value);
 
