@@ -54,9 +54,9 @@ jobs:
         run: npm run docs:build
 
       - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4.2.3
+        uses: JamesIves/github-pages-deploy-action@v4.2.5
         with:
           branch: gh-pages
-          folder: docs/.vuepress/dist
+          folder: docs/src/.vuepress/dist
           ssh-key: ${{ secrets.SSH_TOKEN }}
           repository-name: walinejs/walinejs.github.io
