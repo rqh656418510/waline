@@ -1,4 +1,4 @@
-import { getUserInfo, login, logout, register } from '../services/auth';
+import { getUserInfo, login, logout, register, forgot } from '../services/auth';
 import { updateProfile } from '../services/user';
 
 export const user = {
@@ -29,8 +29,8 @@ export const user = {
       }
       return dispatch.user.setUser(user);
     },
-    async login({ email, password, remember }) {
-      const { token, ...user } = await login({ email, password });
+    async login({ email, password, code, remember }) {
+      const { token, ...user } = await login({ email, password, code });
       if (token) {
         window.TOKEN = token;
         sessionStorage.setItem('TOKEN', token);
@@ -52,6 +52,9 @@ export const user = {
     },
     register(user) {
       return register(user);
+    },
+    forgot(user) {
+      return forgot(user);
     },
     async updateProfile(data) {
       await updateProfile(data);
