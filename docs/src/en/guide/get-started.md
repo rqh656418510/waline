@@ -80,24 +80,31 @@ Welcome to Waline. In just a few steps, you can enable Waline to provide comment
 
 Make the following settings on your web page:
 
-1. Use CDN to import Waline: `///cdn.jsdelivr.net/npm/@waline/client`.
+1. Use CDN to import Waline:
 
-1. Create a `<script>` tag and initialize with `Waline()` while passing in the necessary `el` and `serverURL` options.
+   - `//cdn.jsdelivr.net/npm/@waline/client/dist/waline.js`.
+   - `//cdn.jsdelivr.net/npm/@waline/client/dist/waline.css`.
+
+1. Create a `<script>` tag and initialize with `Waline.init()` while passing in the necessary `el` and `serverURL` options.
 
    - The `el` option is the element used for Waline rendering. You can set a CSS selector in the form of a string or an HTMLElement object.
    - `serverURL` is the link of the server, which you just got.
 
-   ```html {8-14}:line-numbers
+   ```html {3-7,12-18}:line-numbers
    <head>
      <!-- ... -->
-     <script src="//cdn.jsdelivr.net/npm/@waline/client"></script>
+     <script src="//cdn.jsdelivr.net/npm/@waline/client/dist/waline.js"></script>
+     <link
+       rel="style"
+       href="//cdn.jsdelivr.net/npm/@waline/client/dist/waline.css"
+     />
      <!-- ... -->
    </head>
    <body>
      <!-- ... -->
      <div id="waline"></div>
      <script>
-       Waline({
+       Waline.init({
          el: '#waline',
          serverURL: 'https://your-domain.vercel.app',
        });

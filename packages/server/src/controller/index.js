@@ -12,13 +12,10 @@ module.exports = class extends think.Controller {
       <title>Waline Example</title>
     </head>
     <body>
-      <script>
-        var serverURL = location.protocol + '//' + location.host + location.pathname.replace(/\\/+$/, '') + '/ui';
-        window.location.replace(serverURL);
-      </script>
-
-      <!--
-      <div id="waline" style="max-width: 800px;margin: 0 auto;"></div> <script src="https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js"></script>
+    <!--
+      <div id="waline" style="max-width: 800px;margin: 0 auto;"></div>
+      <script src="https://cdn.jsdelivr.net/npm/@waline/client/dist/waline.js"></script>
+      <link href='//cdn.jsdelivr.net/npm/@waline/client/dist/waline.css' rel='stylesheet' />
       <script>
         console.log(
           '%c @waline/server %c v${version} ',
@@ -26,15 +23,14 @@ module.exports = class extends think.Controller {
           'padding:4px;border:1px solid #0078E7;'
         );
         const params = new URLSearchParams(location.search.slice(1));
-        const waline = new Waline({
+        const waline = Waline.init({
           el: '#waline',
           path: params.get('path') || '/',
           lang: params.get('lng'),
           serverURL: location.protocol + '//' + location.host + location.pathname.replace(/\\/+$/, '')
         });
       </script>
-      -->
-
+    -->
     </body>
     </html>`;
   }

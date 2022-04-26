@@ -14,8 +14,8 @@
     "url": "https://github.com/walinejs/waline/issues"
   },
   "repository": {
-    "type": "git",
-    "url": "git+https://github.com/walinejs/waline.git"
+    "url": "https://github.com/walinejs/waline.git",
+    "directory": "packages/admin"
   },
   "license": "MIT",
   "author": "lizheming <i@imnerd.org>",
@@ -53,7 +53,7 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-i18next": "^11.16.6",
-    "react-redux": "^8.0.0",
+    "react-redux": "^8.0.1",
     "react-router-dom": "^6.3.0"
   }
 }

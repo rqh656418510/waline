@@ -8,7 +8,7 @@ export default defineHopeConfig({
       'link',
       {
         rel: 'stylesheet',
-        href: '//at.alicdn.com/t/font_3180165_jfis4tj8ej.css',
+        href: '//at.alicdn.com/t/font_3180165_rlbqujdkar.css',
       },
     ],
   ],
@@ -27,6 +27,7 @@ export default defineHopeConfig({
   },
 
   alias: {
+    '@MigrationTool': path.resolve(__dirname, './components/MigrationTool.vue'),
     '@theme-hope/components/HomePage': path.resolve(
       __dirname,
       './components/HomePage'
