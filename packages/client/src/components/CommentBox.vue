@@ -42,7 +42,7 @@
             :class="['wl-input', `wl-${kind}`]"
             :name="kind"
             :type="kind === 'mail' ? 'email' : 'text'"
-            v-model="inputs[kind]"
+            v-model="userMeta[kind]"
           />
         </div>
       </div>
@@ -52,7 +52,7 @@
         ref="editorRef"
         id="wl-edit"
         :placeholder="replyUser ? `@${replyUser}` : locale.placeholder"
-        v-model="inputs.editor"
+        v-model="editor"
         @keydown="onKeyDown"
         @drop="onDrop"
         @paste="onPaste"
@@ -78,6 +78,7 @@
           </a>
 
           <button
+            v-show="emoji.tabs.length"
             ref="emojiButtonRef"
             class="wl-action"
             :class="{ actived: showEmoji }"
@@ -228,18 +229,19 @@ import {
   PreviewIcon,
   LoadingIcon,
 } from './Icons';
-import { useInputs, useUserInfo } from '../composables';
+import { useEditor, useUserMeta, useUserInfo } from '../composables';
 import {
   getImagefromDataTransfer,
   parseMarkdown,
   getWordNumber,
   parseEmoji,
   postComment,
+  getEmojis,
 } from '../utils';
 
 import type { ComputedRef, DeepReadonly } from 'vue';
 import type { WalineCommentData, WalineImageUploader } from '../typings';
-import type { Config, EmojiConfig } from '../utils';
+import type { WalineConfig, WalineEmojiConfig } from '../utils';
 
 export default defineComponent({
   name: 'CommentBox',
@@ -271,9 +273,12 @@ export default defineComponent({
   emits: ['submit', 'cancel-reply'],
 
   setup(props, { emit }) {
-    const config = inject<ComputedRef<Config>>('config') as ComputedRef<Config>;
+    const config = inject<ComputedRef<WalineConfig>>(
+      'config'
+    ) as ComputedRef<WalineConfig>;
 
-    const inputs = useInputs();
+    const editor = useEditor();
+    const userMeta = useUserMeta();
     const userInfo = useUserInfo();
 
     const inputRefs = ref<Record<string, HTMLInputElement>>({});
@@ -282,7 +287,7 @@ export default defineComponent({
     const emojiButtonRef = ref<HTMLDivElement | null>(null);
     const emojiPopupRef = ref<HTMLDivElement | null>(null);
 
-    const emoji = ref<DeepReadonly<EmojiConfig>>({ tabs: [], map: {} });
+    const emoji = ref<DeepReadonly<WalineEmojiConfig>>({ tabs: [], map: {} });
     const emojiTabIndex = ref(0);
     const showEmoji = ref(false);
     const showPreview = ref(false);
@@ -308,7 +313,7 @@ export default defineComponent({
       const endPosition = textArea.selectionEnd || 0;
       const scrollTop = textArea.scrollTop;
 
-      inputs.value.editor =
+      editor.value =
         textArea.value.substring(0, startPosition) +
         content +
         textArea.value.substring(endPosition, textArea.value.length);
@@ -333,7 +338,7 @@ export default defineComponent({
       return Promise.resolve()
         .then(() => (config.value.imageUploader as WalineImageUploader)(file))
         .then((url) => {
-          inputs.value.editor = inputs.value.editor.replace(
+          editor.value = editor.value.replace(
             uploadText,
             `\r\n![${file.name}](${url})`
           );
@@ -374,9 +379,9 @@ export default defineComponent({
 
       const comment: WalineCommentData = {
         comment: content.value,
-        nick: inputs.value.nick,
-        mail: inputs.value.mail,
-        link: inputs.value.link,
+        nick: userMeta.value.nick,
+        mail: userMeta.value.mail,
+        link: userMeta.value.link,
         ua: navigator.userAgent,
         url: config.value.path,
       };
@@ -446,7 +451,7 @@ export default defineComponent({
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           emit('submit', resp.data!);
 
-          inputs.value.editor = '';
+          editor.value = '';
 
           previewText.value = '';
 
@@ -544,37 +549,6 @@ export default defineComponent({
         showEmoji.value = false;
     };
 
-    // watch editor
-    watch(
-      () => inputs.value.editor,
-      (value) => {
-        const { highlighter, texRenderer } = config.value;
-
-        content.value = value;
-        previewText.value = parseMarkdown(value, {
-          emojiMap: emoji.value.map,
-          highlighter,
-          texRenderer,
-        });
-        wordNumber.value = getWordNumber(value);
-
-        if (editorRef.value)
-          if (value) autosize(editorRef.value);
-          else autosize.destroy(editorRef.value);
-      },
-      { immediate: true }
-    );
-
-    // watch emoji value change
-    watch(
-      () => config.value.emoji,
-      (emojiConfig) =>
-        emojiConfig.then((config) => {
-          emoji.value = config;
-        }),
-      { immediate: true }
-    );
-
     // update wordNumber
     watch(
       [config, wordNumber],
@@ -602,6 +576,40 @@ export default defineComponent({
 
     onMounted(() => {
       document.body.addEventListener('click', popupHandler);
+
+      // watch editor
+      watch(
+        () => editor.value,
+        (value) => {
+          const { highlighter, texRenderer } = config.value;
+
+          content.value = value;
+          previewText.value = parseMarkdown(value, {
+            emojiMap: emoji.value.map,
+            highlighter,
+            texRenderer,
+          });
+          wordNumber.value = getWordNumber(value);
+
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          if (value) autosize(editorRef.value!);
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          else autosize.destroy(editorRef.value!);
+        },
+        { immediate: true }
+      );
+
+      // watch emoji value change
+      watch(
+        () => config.value.emoji,
+        (emojiConfig) =>
+          getEmojis(Array.isArray(emojiConfig) ? emojiConfig : []).then(
+            (config) => {
+              emoji.value = config;
+            }
+          ),
+        { immediate: true }
+      );
     });
 
     onUnmounted(() => {
@@ -634,7 +642,8 @@ export default defineComponent({
       isWordNumberLegal,
 
       // inputs
-      inputs,
+      editor,
+      userMeta,
 
       // emoji
       emoji,

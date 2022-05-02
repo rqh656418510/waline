@@ -61,16 +61,8 @@
 </template>
 
 <script lang="ts">
-import {
-  computed,
-  defineComponent,
-  onBeforeUnmount,
-  onMounted,
-  provide,
-  ref,
-  watch,
-  watchEffect,
-} from 'vue';
+import { useStyleTag } from '@vueuse/core';
+import { computed, defineComponent, onMounted, provide, ref, watch } from 'vue';
 import CommentBox from './CommentBox.vue';
 import CommentCard from './CommentCard.vue';
 import { LoadingIcon } from './Icons';
@@ -134,10 +126,6 @@ export default defineComponent({
         : {}),
     },
 
-    visitor: {
-      type: Boolean,
-    },
-
     dark: {
       type: [String, Boolean],
     },
@@ -175,23 +163,24 @@ export default defineComponent({
     },
 
     emoji: {
-      type: Array as PropType<(string | WalineEmojiInfo)[]>,
+      type: [Array, Boolean] as PropType<(string | WalineEmojiInfo)[] | false>,
       ...(SHOULD_VALIDATE
         ? {
             validator: (value: unknown): boolean =>
-              Array.isArray(value) &&
-              value.every(
-                (item) =>
-                  typeof item === 'string' ||
-                  (typeof item === 'object' &&
-                    typeof item.name === 'string' &&
-                    typeof item.folder === 'string' &&
-                    typeof item.icon === 'string' &&
-                    Array.isArray(item.items) &&
-                    (item.items as unknown[]).every(
-                      (icon) => typeof icon === 'string'
-                    ))
-              ),
+              value === false ||
+              (Array.isArray(value) &&
+                value.every(
+                  (item) =>
+                    typeof item === 'string' ||
+                    (typeof item === 'object' &&
+                      typeof item.name === 'string' &&
+                      typeof item.folder === 'string' &&
+                      typeof item.icon === 'string' &&
+                      Array.isArray(item.items) &&
+                      (item.items as unknown[]).every(
+                        (icon) => typeof icon === 'string'
+                      ))
+                )),
           }
         : {}),
     },
@@ -229,9 +218,10 @@ export default defineComponent({
 
     const darkmodeStyle = computed(() => getDarkStyle(config.value.dark));
 
+    useStyleTag(darkmodeStyle);
+
     // eslint-disable-next-line vue/no-setup-props-destructure
     let abort: () => void;
-    let stop: () => void;
 
     const fetchComment = (pageNumber: number): void => {
       const { serverURL, path, pageSize } = config.value;
@@ -297,21 +287,7 @@ export default defineComponent({
 
     watch(() => props.path, refresh);
 
-    onMounted(() => {
-      refresh();
-
-      const style = document.createElement('style');
-
-      style.innerText = darkmodeStyle.value;
-
-      document.querySelector('[data-waline]')?.appendChild(style);
-
-      stop = watchEffect(() => {
-        style.innerText = darkmodeStyle.value;
-      });
-    });
-
-    onBeforeUnmount(() => stop());
+    onMounted(() => refresh());
 
     return {
       config,
