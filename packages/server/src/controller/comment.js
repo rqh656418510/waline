@@ -388,7 +388,7 @@ module.exports = class extends BaseRest {
           'The comment author had post same comment content before'
         );
 
-        return this.fail('Duplicate Content');
+        return this.fail(this.locale('Duplicate Content'));
       }
 
       think.logger.debug('Comment duplicate check OK!');
@@ -403,7 +403,7 @@ module.exports = class extends BaseRest {
 
       if (!think.isEmpty(recent)) {
         think.logger.debug(`The author has posted in ${IPQPS} seconeds.`);
-        return this.fail('Comment too fast!');
+        return this.fail(this.locale('Comment too fast!'));
       }
 
       think.logger.debug(`Comment post frequence check OK!`);
@@ -460,21 +460,25 @@ module.exports = class extends BaseRest {
 
     think.logger.debug(`Comment have been added to storage.`);
 
-    let parrentComment;
-
+    let parentComment;
     if (pid) {
-      parrentComment = await this.modelInstance.select({ objectId: pid });
-      parrentComment = parrentComment[0];
+      parentComment = await this.modelInstance.select({ objectId: pid });
+      parentComment = parentComment[0];
     }
+
+    await this.ctx.webhook('new_comment', {
+      comment: { ...resp, rawComment: comment },
+      reply: parentComment,
+    });
 
     if (comment.status !== 'spam') {
       const notify = this.service('notify');
-      await notify.run({ ...resp, rawComment: comment }, parrentComment);
+      await notify.run({ ...resp, rawComment: comment }, parentComment);
     }
 
     think.logger.debug(`Comment notify done!`);
 
-    await this.hook('postSave', resp, parrentComment);
+    await this.hook('postSave', resp, parentComment);
 
     think.logger.debug(`Comment post hooks postSave done!`);
 
