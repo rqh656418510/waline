@@ -23,6 +23,11 @@
           v-text="locale.admin"
         />
         <span v-if="comment.sticky" class="wl-badge" v-text="locale.sticky" />
+        <span
+          v-if="comment.level >= 0"
+          :class="`wl-badge level${comment.level}`"
+          v-text="locale[`level${comment.level}`] || `Level ${comment.level}`"
+        />
 
         <span class="wl-time" v-text="time" />
 
@@ -36,6 +41,7 @@
         </button>
       </div>
       <div class="wl-meta" aria-hidden="true">
+        <span v-if="comment.addr" v-text="comment.addr" />
         <span v-if="comment.browser" v-text="comment.browser" />
         <span v-if="comment.os" v-text="comment.os" />
       </div>

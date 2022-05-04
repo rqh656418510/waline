@@ -5,7 +5,7 @@ const { getMarkdownParser } = require('../service/markdown');
 
 const markdownParser = getMarkdownParser();
 async function formatCmt(
-  { ua, user_id, ...comment },
+  { ua, user_id, ip, ...comment },
   users = [],
   { avatarProxy },
   loginUser
@@ -41,8 +41,13 @@ async function formatCmt(
     delete comment.mail;
   } else {
     comment.orig = comment.comment;
+    comment.ip = ip;
   }
 
+  // administrator can always show region
+  if (isAdmin || !think.config('disableRegion')) {
+    comment.addr = await think.ip2region(ip, { depth: isAdmin ? 3 : 1 });
+  }
   comment.comment = markdownParser(comment.comment);
   return comment;
 }
@@ -88,6 +93,7 @@ module.exports = class extends BaseRest {
             'pid',
             'rid',
             'ua',
+            'ip',
             'user_id',
             'sticky',
           ],
@@ -235,6 +241,7 @@ module.exports = class extends BaseRest {
             'pid',
             'rid',
             'ua',
+            'ip',
             'user_id',
             'sticky',
           ],
@@ -264,6 +271,13 @@ module.exports = class extends BaseRest {
             ...comments.filter(({ rid, sticky }) => !rid && sticky),
             ...comments.filter(({ rid, sticky }) => !rid && !sticky),
           ].slice(pageOffset, pageOffset + pageSize);
+          const rootIds = {};
+          rootComments.forEach(({ objectId }) => {
+            rootIds[objectId] = true;
+          });
+          comments = comments.filter(
+            (cmt) => rootIds[cmt.objectId] || rootIds[cmt.rid]
+          );
         } else {
           rootComments = await this.modelInstance.select(
             { ...where, rid: undefined },
@@ -303,6 +317,50 @@ module.exports = class extends BaseRest {
               field: ['display_name', 'email', 'url', 'type', 'avatar'],
             }
           );
+        }
+
+        if (think.isArray(this.config('levels'))) {
+          const countWhere = {
+            status: ['NOT IN', ['waiting', 'spam']],
+            _complex: {},
+          };
+          if (user_ids.length) {
+            countWhere._complex.user_id = ['IN', user_ids];
+          }
+          const mails = Array.from(
+            new Set(comments.map(({ mail }) => mail).filter((v) => v))
+          );
+          if (mails.length) {
+            countWhere._complex.mail = ['IN', mails];
+          }
+          if (!think.isEmpty(countWhere._complex)) {
+            countWhere._complex._logic = 'or';
+          } else {
+            delete countWhere._complex;
+          }
+          const counts = await this.modelInstance.count(countWhere, {
+            group: ['user_id', 'mail'],
+          });
+          comments.forEach((cmt) => {
+            const countItem = (counts || []).find(({ mail, user_id }) => {
+              if (user_id) {
+                return user_id === cmt.user_id;
+              }
+              return mail === cmt.mail;
+            });
+
+            let level = 0;
+            if (countItem) {
+              const _level = think.findLastIndex(
+                this.config('levels'),
+                (l) => l <= countItem.count
+              );
+              if (_level !== -1) {
+                level = _level;
+              }
+            }
+            cmt.level = level;
+          });
         }
 
         return this.json({

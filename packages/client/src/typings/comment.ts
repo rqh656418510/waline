@@ -22,4 +22,6 @@ export interface WalineComment extends Exclude<WalineCommentData, 'ua'> {
   sticky?: boolean;
   browser?: string;
   os?: string;
+  level?: number;
+  addr?: string;
 }
