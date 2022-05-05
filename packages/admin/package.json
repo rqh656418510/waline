@@ -1,6 +1,6 @@
 {
   "name": "@waline/admin",
-  "version": "0.17.5",
+  "version": "0.18.0",
   "description": "management system for waline",
   "keywords": [
     "waline",
@@ -26,7 +26,7 @@
     "build": "webpack --mode=production",
     "clean": "rimraf ./dist",
     "dev": "webpack serve --mode=development",
-    "prepublish": "npm run build"
+    "prepublish": "pnpm build"
   },
   "browserslist": {
     "production": [
@@ -54,6 +54,7 @@
     "react-dom": "^18.1.0",
     "react-i18next": "^11.16.7",
     "react-redux": "^8.0.1",
-    "react-router-dom": "^6.3.0"
+    "react-router-dom": "^6.3.0",
+    "redux": "^4.2.0"
   }
 }
