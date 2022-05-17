@@ -1,4 +1,5 @@
 @use 'emoji';
+@use 'gif';
 
 .wl-comment {
   position: relative;
@@ -196,7 +197,6 @@
   .wl-content {
     min-height: 1.25em;
     padding: 0.25em;
-
     word-break: break-word;
     hyphens: auto;
 
@@ -289,3 +289,4 @@
 }
 
 @include emoji.emoji;
+@include gif.gif;

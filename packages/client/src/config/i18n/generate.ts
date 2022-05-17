@@ -10,6 +10,8 @@ const localeKeys = [
   'placeholder',
   'sofa',
   'submit',
+  'like',
+  'cancelLike',
   'reply',
   'cancelReply',
   'comment',
@@ -37,6 +39,8 @@ const localeKeys = [
   'level3',
   'level4',
   'level5',
+  'gif',
+  'gifSearchPlaceholder',
 ];
 
 export const generateLocale = (locale: string[]): WalineLocale =>

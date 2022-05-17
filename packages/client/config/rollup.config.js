@@ -1,31 +1,28 @@
 import { babel, getBabelOutputPlugin } from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
+import ts from 'rollup-plugin-ts';
 import dts from 'rollup-plugin-dts';
-import typescript2 from 'rollup-plugin-typescript2';
-import vue from 'rollup-plugin-vue';
 import { terser } from 'rollup-plugin-terser';
 import replace from '@rollup/plugin-replace';
 import { version } from '../package.json';
+import vue from '@vitejs/plugin-vue';
 
 const commonOptions = {
   plugins: [
-    vue(),
-    typescript2({
-      tsconfigOverride: {
-        compilerOptions: {
-          declaration: false,
-          declarationMap: false,
-        },
-      },
+    vue({
+      isProduction: true,
     }),
+    ts(),
     replace({
       'process.env.NODE_ENV': JSON.stringify('production'),
       'process.env["NODE_ENV"]': JSON.stringify('production'),
       "process.env['NODE_ENV']": JSON.stringify('production'),
+      __VUE_OPTIONS_API__: false,
+      __VUE_PROD_DEVTOOLS__: false,
       SHOULD_VALIDATE: JSON.stringify(false),
       VERSION: JSON.stringify(version),
-      preventAssignment: true,
+      preventAssignment: false,
     }),
     nodeResolve({ preferBuiltins: true }),
     commonjs(),
@@ -56,22 +53,19 @@ export default [
     ],
     ...commonOptions,
     plugins: [
-      vue(),
-      typescript2({
-        tsconfigOverride: {
-          compilerOptions: {
-            declaration: false,
-            declarationMap: false,
-          },
-        },
+      vue({
+        isProduction: true,
       }),
+      ts(),
       replace({
         'process.env.NODE_ENV': JSON.stringify('production'),
         'process.env["NODE_ENV"]': JSON.stringify('production'),
         "process.env['NODE_ENV']": JSON.stringify('production'),
         SHOULD_VALIDATE: JSON.stringify(false),
+        __VUE_OPTIONS_API__: false,
+        __VUE_PROD_DEVTOOLS__: false,
         VERSION: JSON.stringify(version),
-        preventAssignment: true,
+        preventAssignment: false,
       }),
       nodeResolve({ preferBuiltins: true }),
       commonjs(),
@@ -83,11 +77,11 @@ export default [
     ],
   },
 
-  // legacy declaration files
+  // // legacy declaration files
   {
     input: './src/entrys/legacy.ts',
     output: [{ file: './dist/legacy.d.ts', format: 'esm' }],
-    plugins: [dts()],
+    plugins: [dts({ compilerOptions: { preserveSymlinks: false } })],
   },
 
   // full package
@@ -122,7 +116,7 @@ export default [
       { file: './dist/waline.cjs.d.ts', format: 'esm' },
       { file: './dist/waline.esm.d.ts', format: 'esm' },
     ],
-    plugins: [dts()],
+    plugins: [dts({ compilerOptions: { preserveSymlinks: false } })],
   },
 
   // shim package
@@ -151,7 +145,7 @@ export default [
       { file: './dist/shim.d.ts', format: 'esm' },
       { file: './dist/shim.esm.d.ts', format: 'esm' },
     ],
-    plugins: [dts()],
+    plugins: [dts({ compilerOptions: { preserveSymlinks: false } })],
   },
 
   // components
@@ -208,6 +202,6 @@ export default [
       { file: './dist/pageview.cjs.d.ts', format: 'esm' },
       { file: './dist/pageview.esm.d.ts', format: 'esm' },
     ],
-    plugins: [dts()],
+    plugins: [dts({ compilerOptions: { preserveSymlinks: false } })],
   },
 ];

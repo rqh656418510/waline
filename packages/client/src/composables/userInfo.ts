@@ -10,11 +10,19 @@ export interface UserInfo {
   token: string;
   avatar: string;
   mailMd5: string;
+  objectId: string | number;
+  type: 'administrator' | 'guest';
 }
 
 export const USER_KEY = 'WALINE_USER';
 
 export type UserInfoRef = Ref<UserInfo | Record<string, never>>;
 
+let userInfoStorage: UserInfoRef | null = null;
+
 export const useUserInfo = (): UserInfoRef =>
-  useStorage<UserInfo | Record<string, never>>('USER_KEY', {});
+  userInfoStorage ||
+  (userInfoStorage = useStorage<UserInfo | Record<string, never>>(
+    'USER_KEY',
+    {}
+  ));

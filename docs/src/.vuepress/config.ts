@@ -98,14 +98,11 @@ export default defineUserConfig({
     }),
   ],
 
-  // TODO: Remove this when vuepress-theme-hope fix related issue
   extendsBundlerOptions: (config, app) => {
-    config.viteOptions.optimizeDeps = config.viteOptions.optimizeDeps ?? {};
+    config.viteOptions.ssr = config.viteOptions.ssr ?? {};
 
-    config.viteOptions.optimizeDeps.include =
-      config.viteOptions.optimizeDeps.include ?? [];
+    config.viteOptions.ssr.noExternal = config.viteOptions.ssr.noExternal ?? [];
 
-    config.viteOptions.optimizeDeps.include.push('bcryptjs');
-    config.viteOptions.optimizeDeps.include.push('lodash.throttle');
+    config.viteOptions.ssr.noExternal.push('@mr-hope/vuepress-shared');
   },
 });

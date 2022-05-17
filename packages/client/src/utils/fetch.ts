@@ -5,6 +5,11 @@ export interface FetchErrorData {
   errmsg: string;
 }
 
+const JSON_HEADERS: Record<string, string> = {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  'Content-Type': 'application/json',
+};
+
 const errorCheck = <T = unknown>(data: T | FetchErrorData, name = ''): T => {
   if (typeof data === 'object' && (data as FetchErrorData).errno)
     throw new TypeError(
@@ -143,6 +148,77 @@ export const postComment = ({
   }).then((resp) => resp.json() as Promise<PostCommentResponse>);
 };
 
+export interface DeleteCommentOptions {
+  serverURL: string;
+  lang: string;
+  token: string;
+  objectId: string | number;
+}
+
+export const deleteComment = ({
+  serverURL,
+  lang,
+  token,
+  objectId,
+}: DeleteCommentOptions): Promise<void> => {
+  const headers: Record<string, string> = {
+    Authorization: `Bearer ${token}`,
+  };
+
+  return fetch(`${serverURL}/comment/${objectId}?lang=${lang}`, {
+    method: 'DELETE',
+    headers,
+  }).then((resp) => resp.json() as Promise<void>);
+};
+
+export interface LikeCommentOptions {
+  serverURL: string;
+  lang: string;
+  objectId: number | string;
+  like: boolean;
+}
+
+export const likeComment = ({
+  serverURL,
+  lang,
+  objectId,
+  like,
+}: LikeCommentOptions): Promise<void> =>
+  fetch(`${serverURL}/comment/${objectId}?lang=${lang}`, {
+    method: 'PUT',
+    headers: JSON_HEADERS,
+    body: JSON.stringify({ like }),
+  }).then((resp) => resp.json() as Promise<void>);
+
+export interface UpdateCommentOptions {
+  serverURL: string;
+  lang: string;
+  token: string;
+  objectId: number | string;
+  status?: 'approved' | 'waiting' | 'spam';
+  sticky?: number;
+}
+
+export const updateComment = ({
+  serverURL,
+  lang,
+  token,
+  objectId,
+  ...data
+}: UpdateCommentOptions): Promise<void> => {
+  const headers: Record<string, string> = {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  };
+
+  return fetch(`${serverURL}/comment/${objectId}?lang=${lang}`, {
+    method: 'PUT',
+    headers,
+    body: JSON.stringify(data),
+  }).then((resp) => resp.json() as Promise<void>);
+};
+
 export interface FetchPageviewsOptions {
   serverURL: string;
   lang: string;
@@ -180,10 +256,7 @@ export const updatePageviews = ({
 }: UpdatePageviewsOptions): Promise<number> =>
   fetch(`${serverURL}/article?lang=${lang}`, {
     method: 'POST',
-    headers: {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      'Content-Type': 'application/json',
-    },
+    headers: JSON_HEADERS,
     body: JSON.stringify({ path }),
   })
     .then((resp) => resp.json() as Promise<number>)

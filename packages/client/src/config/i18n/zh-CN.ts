@@ -10,6 +10,8 @@ export default generateLocale([
   '欢迎评论',
   '来发评论吧~',
   '提交',
+  '喜欢',
+  '取消喜欢',
   '回复',
   '取消回复',
   '评论',
@@ -37,4 +39,6 @@ export default generateLocale([
   '活跃',
   '话痨',
   '传说',
+  '表情包',
+  '搜索表情包',
 ]);

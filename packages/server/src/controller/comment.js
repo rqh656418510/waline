@@ -50,6 +50,7 @@ async function formatCmt(
     comment.addr = await think.ip2region(ip, { depth: isAdmin ? 3 : 1 });
   }
   comment.comment = markdownParser(comment.comment);
+  comment.like = Number(comment.like) || 0;
   return comment;
 }
 
@@ -97,6 +98,7 @@ module.exports = class extends BaseRest {
             'ip',
             'user_id',
             'sticky',
+            'like',
           ],
         });
 
@@ -231,7 +233,7 @@ module.exports = class extends BaseRest {
         const where = { url };
         if (think.isEmpty(userInfo) || this.config('storage') === 'deta') {
           where.status = ['NOT IN', ['waiting', 'spam']];
-        } else {
+        } else if (userInfo.type !== 'administrator') {
           where._complex = {
             _logic: 'or',
             status: ['NOT IN', ['waiting', 'spam']],
@@ -259,6 +261,7 @@ module.exports = class extends BaseRest {
             'ip',
             'user_id',
             'sticky',
+            'like',
           ],
         };
 
@@ -365,7 +368,7 @@ module.exports = class extends BaseRest {
           });
           comments.forEach((cmt) => {
             const countItem = (counts || []).find(({ mail, user_id }) => {
-              if (user_id) {
+              if (cmt.user_id) {
                 return user_id === cmt.user_id;
               }
               return mail === cmt.mail;
@@ -553,7 +556,12 @@ module.exports = class extends BaseRest {
 
     if (comment.status !== 'spam') {
       const notify = this.service('notify');
-      await notify.run({ ...resp, rawComment: comment }, parentComment);
+      await notify.run(
+        { ...resp, comment: markdownParser(resp.comment), rawComment: comment },
+        parentComment
+          ? { ...parentComment, comment: markdownParser(parentComment.comment) }
+          : undefined
+      );
     }
 
     think.logger.debug(`Comment notify done!`);
@@ -568,13 +576,27 @@ module.exports = class extends BaseRest {
   }
 
   async putAction() {
-    const data = this.post();
+    const { userInfo } = this.ctx.state;
+    let data = this.post();
     let oldData = await this.modelInstance.select({ objectId: this.id });
     if (think.isEmpty(oldData)) {
       return this.success();
     }
 
     oldData = oldData[0];
+    if (think.isEmpty(userInfo) || userInfo.type !== 'administrator') {
+      if (!think.isBoolean(data.like)) {
+        return this.success();
+      }
+
+      const likeIncMax = this.config('LIKE_INC_MAX') || 1;
+      data = {
+        like:
+          (Number(oldData.like) || 0) +
+          (data.like ? Math.ceil(Math.random() * likeIncMax) : -1),
+      };
+    }
+
     const preUpdateResp = await this.hook('preUpdate', {
       ...data,
       objectId: this.id,
@@ -599,7 +621,11 @@ module.exports = class extends BaseRest {
       pComment = pComment[0];
 
       const notify = this.service('notify');
-      await notify.run(newData, pComment, true);
+      await notify.run(
+        { ...newData, comment: markdownParser(newData.comment) },
+        { ...pComment, comment: markdownParser(pComment.comment) },
+        true
+      );
     }
 
     await this.hook('postUpdate', data);

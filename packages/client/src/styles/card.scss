@@ -18,12 +18,12 @@
   .wl-user {
     --avatar-size: var(--waline-avatar-size);
 
+    position: relative;
+    margin-right: 0.75em;
+
     @media (max-width: 720px) {
       --avatar-size: var(--waline-m-avatar-size);
     }
-
-    position: relative;
-    margin-right: 0.75em;
 
     img {
       width: var(--avatar-size);
@@ -101,30 +101,6 @@
     font-size: 0.75em;
   }
 
-  .wl-reply {
-    float: right;
-
-    padding: 4px;
-    border: none;
-
-    background: transparent;
-    color: var(--waline-color);
-
-    line-height: 1;
-
-    cursor: pointer;
-
-    transition: color 0.2s ease;
-
-    &:hover {
-      color: var(--waline-theme-color);
-    }
-
-    &.active {
-      color: var(--waline-active-color);
-    }
-  }
-
   .wl-meta {
     position: relative;
     line-height: 1;
@@ -149,6 +125,37 @@
       &:empty {
         display: none;
       }
+    }
+  }
+
+  .wl-comment-actions {
+    float: right;
+  }
+
+  .wl-delete,
+  .wl-like,
+  .wl-reply {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 4px;
+    border: none;
+
+    background: transparent;
+    color: var(--waline-color);
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--waline-theme-color);
+    }
+
+    &.active {
+      color: var(--waline-active-color);
     }
   }
 
@@ -210,6 +217,28 @@
 
     > *:last-child {
       margin-bottom: 0;
+    }
+  }
+
+  .wl-admin-actions {
+    margin: 8px 0;
+    font-size: 12px;
+    text-align: right;
+  }
+
+  .wl-comment-status {
+    margin: 0 8px;
+
+    .wl-btn {
+      border-radius: 0;
+
+      &:first-child {
+        border-radius: 0.5em 0 0 0.5em;
+      }
+
+      &:last-child {
+        border-radius: 0 0.5em 0.5em 0;
+      }
     }
   }
 

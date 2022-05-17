@@ -15,6 +15,10 @@
         :reply="reply"
         @reply="onReply"
         @submit="onSubmit"
+        @status="onStatusChange"
+        @delete="onDelete"
+        @sticky="onSticky"
+        @like="onLike"
       />
     </div>
 
@@ -66,13 +70,21 @@ import { computed, defineComponent, onMounted, provide, ref, watch } from 'vue';
 import CommentBox from './CommentBox.vue';
 import CommentCard from './CommentCard.vue';
 import { LoadingIcon } from './Icons';
-import { useUserInfo } from '../composables';
+import { useUserInfo, useLikeStorage } from '../composables';
 import { defaultLocales } from '../config';
-import { fetchCommentList, getConfig, getDarkStyle } from '../utils';
+import {
+  deleteComment,
+  fetchCommentList,
+  likeComment,
+  getConfig,
+  getDarkStyle,
+  updateComment,
+} from '../utils';
 
 import type { PropType } from 'vue';
 import type {
   WalineComment,
+  WalineCommentStatus,
   WalineEmojiInfo,
   WalineHighlighter,
   WalineTexRenderer,
@@ -203,6 +215,7 @@ export default defineComponent({
     const config = computed(() => getConfig(props as unknown as WalineProps));
 
     const userInfo = useUserInfo();
+    const likeStorage = useLikeStorage();
 
     const status = ref<'loading' | 'success' | 'error'>('loading');
 
@@ -281,6 +294,102 @@ export default defineComponent({
       } else data.value.unshift(comment);
     };
 
+    const onStatusChange = async ({
+      comment,
+      status,
+    }: {
+      comment: WalineComment;
+      status: WalineCommentStatus;
+    }): Promise<void> => {
+      if (comment.status === status) return;
+
+      const { serverURL, lang } = config.value;
+
+      await updateComment({
+        serverURL,
+        lang,
+        token: userInfo.value?.token,
+        objectId: comment.objectId,
+        status,
+      });
+
+      comment.status = status;
+    };
+
+    const onSticky = async (comment: WalineComment): Promise<void> => {
+      if (comment.rid) return;
+
+      const { serverURL, lang } = config.value;
+
+      await updateComment({
+        serverURL,
+        lang,
+        token: userInfo.value?.token,
+        objectId: comment.objectId,
+        sticky: comment.sticky ? 0 : 1,
+      });
+
+      comment.sticky = !comment.sticky;
+    };
+
+    const onDelete = async ({ objectId }: WalineComment): Promise<void> => {
+      if (!confirm('Are you sure you want to delete this comment?')) return;
+
+      const { serverURL, lang } = config.value;
+
+      await deleteComment({
+        serverURL,
+        lang,
+        token: userInfo.value?.token,
+        objectId: objectId,
+      });
+
+      // delete comment from data
+      data.value.some((item, index) => {
+        if (item.objectId === objectId) {
+          data.value = data.value.filter((_item, i) => i !== index);
+
+          return true;
+        }
+
+        return item.children.some((child, childIndex) => {
+          if (child.objectId === objectId) {
+            data.value[index].children = item.children.filter(
+              (_item, i) => i !== childIndex
+            );
+
+            return true;
+          }
+
+          return false;
+        });
+      });
+    };
+
+    const onLike = async (comment: WalineComment): Promise<void> => {
+      const { serverURL, lang } = config.value;
+      const { objectId } = comment;
+      const hasLiked = likeStorage.value.includes(objectId);
+
+      await likeComment({
+        serverURL,
+        lang,
+        objectId,
+        like: !hasLiked,
+      });
+
+      if (hasLiked)
+        likeStorage.value = likeStorage.value.filter((id) => id !== objectId);
+      else {
+        likeStorage.value = [...likeStorage.value, objectId];
+
+        if (likeStorage.value.length > 50)
+          likeStorage.value = likeStorage.value.slice(-50);
+      }
+
+      comment.like = (comment.like || 0) + (hasLiked ? -1 : 1);
+    };
+
     provide('config', config);
 
     watch(() => (props as unknown as WalineProps).path, refresh);
@@ -303,6 +412,10 @@ export default defineComponent({
       refresh,
       onReply,
       onSubmit,
+      onStatusChange,
+      onDelete,
+      onSticky,
+      onLike,
 
       version: VERSION,
     };
