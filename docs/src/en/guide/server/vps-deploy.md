@@ -30,7 +30,7 @@ docker build -t lizheming/waline -f packages/server/Dockerfile .
 
 ### via [docker stack deploy](https://docs.docker.com/engine/reference/commandline/stack_deploy/) or [docker-compose](https://github.com/docker/compose)
 
-The SQLite is used here as an example. For SQLite and supported database services, please refer to [Multi-database service support](../databases.md#sqlite).
+The SQLite is used here as an example. For SQLite and supported database services, please refer to [Multi-database service support](./databases.md#sqlite).
 
 Example `docker-compose.yml` for `waline`:
 
@@ -61,18 +61,16 @@ services:
 
 It's easy to run without using docker deployment, after setting environment variables, just run the `vanilla.js` file in the module after installing.
 
-:::: code-group
+::: code-tabs#shell
 
-::: code-group-item npm
+@tab npm
 
 ```bash
 npm install @waline/vercel
 node node_modules/@waline/vercel/vanilla.js
 ```
 
-:::
-
-::: code-group-item yarn
+@tab yarn
 
 ```bash
 yarn add @waline/vercel
@@ -80,8 +78,6 @@ node node_modules/@waline/vercel/vanilla.js
 ```
 
 :::
-
-::::
 
 ## Nginx config
 

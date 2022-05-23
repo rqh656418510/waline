@@ -11,9 +11,9 @@ Waline 提供多种版本的客户端文件。你可以通过多种方式引入 
 
 推荐使用 [unpkg](https://unpkg.com/@waline/client)。
 
-:::: code-group
+::: code-tabs
 
-::: code-group-item 推荐版本
+@tab 推荐版本
 
 ```html
 <!-- 脚本文件 -->
@@ -25,9 +25,7 @@ Waline 提供多种版本的客户端文件。你可以通过多种方式引入 
 />
 ```
 
-:::
-
-::: code-group-item 仅浏览量
+@tab 仅浏览量
 
 ```html
 <!-- 浏览量 -->
@@ -35,8 +33,6 @@ Waline 提供多种版本的客户端文件。你可以通过多种方式引入 
 ```
 
 :::
-
-::::
 
 ::: info 指定版本
 
@@ -55,25 +51,27 @@ Waline 提供多种版本的客户端文件。你可以通过多种方式引入 
 
 Waline 客户端已通过 `@waline/client` 发布到 [npm](https://www.npmjs.com/package/@waline/client)，你可以通过以下命令安装:
 
-:::: code-group
+::: code-tabs#shell
 
-::: code-group-item yarn
+@tab pnpm
+
+```bash
+pnpm add -D @waline/client
+```
+
+@tab yarn
 
 ```bash
 yarn add -D @waline/client
 ```
 
-:::
-
-::: code-group-item npm
+@tab npm
 
 ```bash
 npm i -D @waline/client
 ```
 
 :::
-
-::::
 
 ### 引入
 
@@ -115,9 +113,9 @@ Waline 提供多个版本的文件:
 
 你可以通过多种形式导入需要的文件并使用，以下是一个示例。
 
-:::: code-group
+::: code-tabs#lang
 
-::: code-group-item JS
+@tab JS
 
 ```js
 import { init } from '@waline/client';
@@ -130,9 +128,7 @@ init({
 });
 ```
 
-:::
-
-::: code-group-item TS
+@tab TS
 
 ```ts
 import { init } from '@waline/client';
@@ -146,5 +142,3 @@ init({
 ```
 
 :::
-
-::::

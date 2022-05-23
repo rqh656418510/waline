@@ -61,9 +61,16 @@ services:
 
 不使用容器部署的话运行也很简单。在配置必要的环境变量后，安装好模块后直接运行模块内的 `vanilla.js` 文件即可。
 
-:::: code-group
+::: code-tabs#shell
 
-::: code-group-item npm
+@tab yarn
+
+```bash
+yarn add @waline/vercel
+node node_modules/@waline/vercel/vanilla.js
+```
+
+@tab npm
 
 ```bash
 npm install @waline/vercel
@@ -71,17 +78,6 @@ node node_modules/@waline/vercel/vanilla.js
 ```
 
 :::
-
-::: code-group-item yarn
-
-```bash
-yarn add @waline/vercel
-node node_modules/@waline/vercel/vanilla.js
-```
-
-:::
-
-::::
 
 ## Nginx 配置
 
