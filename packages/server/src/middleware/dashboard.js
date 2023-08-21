@@ -13,9 +13,7 @@ module.exports = function () {
     window.SITE_URL = ${JSON.stringify(process.env.SITE_URL)};
     window.SITE_NAME = ${JSON.stringify(process.env.SITE_NAME)};
     </script>
-    <script src="${
-      process.env.WALINE_ADMIN_MODULE_ASSET_URL || '//unpkg.com/@waline/admin'
-    }"></script>
+    <script src="https://www.techgrow.cn/lib/@waline/admin/admin@0.18.0.min.js"></script>
   </body>
 </html>`;
   };
